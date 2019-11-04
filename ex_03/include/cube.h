@@ -2,30 +2,59 @@
 #define _CUBE_H_
 
 #include "macros.h"
+#include "mesh.h"
 
-void drawCube()
+struct vec3
 {
-    //glBegin(GL_TRIANGLE_STRIP);
-    glBegin(GL_LINE_STRIP);
+    float x, y, z;
+    vec3(float x, float y, float z) : x(x), y(y), z(z) {}
+};
 
+void addTriangle(const vec3& v1, const vec3& v2, const vec3& v3)
+{
     glColor3f(0xFF, 0x00, 0x00);
-    glVertex3f(- SHAPE_SCREEN_SIZE_X / 2, - SHAPE_SCREEN_SIZE_Y / 2, - SHAPE_SCREEN_SIZE_Z / 2);
-    glVertex3f(+ SHAPE_SCREEN_SIZE_X / 2, - SHAPE_SCREEN_SIZE_Y / 2, - SHAPE_SCREEN_SIZE_Z / 2);
+    glVertex3f(v1.x, v1.y, v1.z);
 
-    glVertex3f(- SHAPE_SCREEN_SIZE_X / 2, + SHAPE_SCREEN_SIZE_Y / 2, - SHAPE_SCREEN_SIZE_Z / 2);
-    glVertex3f(+ SHAPE_SCREEN_SIZE_X / 2, + SHAPE_SCREEN_SIZE_Y / 2, - SHAPE_SCREEN_SIZE_Z / 2);
+    glColor3f(0x00, 0xFF, 0x00);
+    glVertex3f(v2.x, v2.y, v2.z);
 
-    glColor3f(0xFF, 0x55, 0x55);
+    glColor3f(0x00, 0x00, 0xFF);
+    glVertex3f(v3.x, v3.y, v3.z);
+}
 
-    glVertex3f(- SHAPE_SCREEN_SIZE_X / 2, + SHAPE_SCREEN_SIZE_Y / 2, + SHAPE_SCREEN_SIZE_Z / 2);
-    glVertex3f(+ SHAPE_SCREEN_SIZE_X / 2, + SHAPE_SCREEN_SIZE_Y / 2, + SHAPE_SCREEN_SIZE_Z / 2);
-    // glVertex3f(- SHAPE_SCREEN_SIZE_X / 2, + SHAPE_SCREEN_SIZE_Y / 2, + SHAPE_SCREEN_SIZE_Z / 2);
-    // glVertex3f(+ SHAPE_SCREEN_SIZE_X / 2, + SHAPE_SCREEN_SIZE_Y / 2, + SHAPE_SCREEN_SIZE_Z / 2);
-    //glColor3f(0x00, 0x00, 0x00);
-    glVertex3f(- SHAPE_SCREEN_SIZE_X / 2, - SHAPE_SCREEN_SIZE_Y / 2, + SHAPE_SCREEN_SIZE_Z / 2);
-    glVertex3f(+ SHAPE_SCREEN_SIZE_X / 2, - SHAPE_SCREEN_SIZE_Y / 2, + SHAPE_SCREEN_SIZE_Z / 2);
+void addQuad(const vec3& v1, const vec3& v2, const vec3& v3, const vec3& v4)
+{
+    addTriangle(v1, v2, v3);
+    addTriangle(v1, v3, v4);
+}
 
+void drawCube(bool showEdges)
+{
+    if (showEdges)
+        glBegin(GL_LINE_LOOP);
+    else 
+        glBegin(GL_TRIANGLES);
 
+    for (int i = -1; i < 2; i += 2)
+    {
+        addQuad(
+            vec3(i, -1, -1), 
+            vec3(i, -1, 1), 
+            vec3(i, 1, 1),
+            vec3(i, 1, -1));
+
+        addQuad(
+            vec3(-1, i, -1), 
+            vec3(-1, i, 1), 
+            vec3(1, i, 1),
+            vec3(1, i, -1));
+
+        addQuad(
+            vec3(-1, -1, i), 
+            vec3(-1, 1, i), 
+            vec3(1, 1, i),
+            vec3(1, -1, i));
+    }
 
     glEnd();
 }

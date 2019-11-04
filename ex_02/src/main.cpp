@@ -4,7 +4,6 @@
 #include "mesh.h"
 #include "sphere.h"
 #include "cone.h"
-#include "cube.h"
 
 void moveShape(GLFWwindow* window)
 {
@@ -78,8 +77,6 @@ void updateColor(GLFWwindow* window)
 
 void drawShapes(GLFWwindow* window, GLenum drawMode = GL_TRIANGLE_FAN)
 {
-    //drawCube();
-
     if (glfwGetKey(window, GLFW_KEY_3))
     {
         glBegin(GL_LINES);

@@ -5,8 +5,24 @@
 #include "sphere.h"
 #include "cone.h"
 #include "cube.h"
+#include "referential.h"
+#include "doOnce.h"
 
-void moveShape(GLFWwindow* window)
+constexpr float rotationSpeed = 0.5f;
+constexpr float scaleSpeed = 1.f / 10.f;
+
+struct S_Inputs
+{
+    S_DoOnce scaleSubstract;
+    S_DoOnce scaleAdd;
+    S_DoOnce x;
+    S_DoOnce y;
+    S_DoOnce z;
+
+    S_DoOnce showEdges;
+};
+
+void moveShape(GLFWwindow* window, S_Inputs& inputs)
 {
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT))
     {
@@ -27,25 +43,24 @@ void moveShape(GLFWwindow* window)
             glTranslated(0.0, 0, -1/100);
         }
     }
-    else 
-    {
-        if (glfwGetKey(window, GLFW_KEY_RIGHT))
-        {
-            glRotated(0.5, 0, 1.0, 0.0);
-        }
-        if (glfwGetKey(window, GLFW_KEY_LEFT))
-        {
-            glRotated(0.5, 0, -1.0, 0.0);
-        }
-        if (glfwGetKey(window, GLFW_KEY_UP))
-        {
-            glRotated(0.5, 1, 0.0, 0);
-        }
-        if (glfwGetKey(window, GLFW_KEY_DOWN))
-        {
-            glRotated(0.5, -1, 0.0, 0);
-        }
-    }
+
+    inputs.x.input(glfwGetKey(window, GLFW_KEY_X));
+    if (inputs.x.isOn)
+        glRotated(rotationSpeed, 1.f, 0.f, 0.f);
+
+    inputs.y.input(glfwGetKey(window, GLFW_KEY_Y));
+    if (inputs.y.isOn)
+        glRotated(rotationSpeed, 0.f, 1.f, 0.f);
+    
+    inputs.z.input(glfwGetKey(window, GLFW_KEY_Z));
+    if (inputs.z.isOn)
+        glRotated(rotationSpeed, 0.f, 0.f, 1.f);
+    
+
+    if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) || glfwGetKey(window, GLFW_KEY_MINUS))
+        glScalef(1.f - scaleSpeed, 1.f - scaleSpeed, 1.f - scaleSpeed);
+    if (glfwGetKey(window, GLFW_KEY_KP_ADD)  || glfwGetKey(window, GLFW_KEY_EQUAL))
+        glScalef(1.f + scaleSpeed, 1.f + scaleSpeed, 1.f + scaleSpeed);
 }
 
 void updateColor(GLFWwindow* window)
@@ -76,28 +91,29 @@ void updateColor(GLFWwindow* window)
     }
 }
 
-void drawShapes(GLFWwindow* window, GLenum drawMode = GL_TRIANGLE_FAN)
+void drawShapes(GLFWwindow* window, GLenum drawMode = GL_TRIANGLE_FAN, bool showEdges = false)
 {
     //drawCube();
 
-    if (glfwGetKey(window, GLFW_KEY_3))
-    {
-        glBegin(GL_LINES);
-
-        glVertex3f(0, 0, 0);
-        glVertex3f(0, 1, 0);
-
-        glVertex3f(0, 0, 0);
-        glVertex3f(1, 0, 0);
-
-        glVertex3f(0, 0, 0);
-        glVertex3f(0, 0, 1);
-
-        glEnd();
-    }
-
     Mesh mesh;
     mesh.drawMode = drawMode;
+
+    if (glfwGetKey(window, GLFW_KEY_1))
+    {
+        //sphere.bDraw = true;
+        UVSphere(100, 100, mesh);
+        mesh.draw();
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_2))
+    {
+        drawCube(showEdges);
+    }
+
+    if (glfwGetKey(window, GLFW_KEY_3))
+    {
+        drawRef();
+    }
 
     if (glfwGetKey(window, GLFW_KEY_4))
     {
@@ -129,13 +145,6 @@ void drawShapes(GLFWwindow* window, GLenum drawMode = GL_TRIANGLE_FAN)
         drawCone(9, mesh);
     }
 
-    if (glfwGetKey(window, GLFW_KEY_0))
-    {
-        //sphere.bDraw = true;
-        UVSphere(100, 100, mesh);
-        mesh.draw();
-    }
-
     if (glfwGetKey(window, GLFW_KEY_ESCAPE))
     {
         glfwSetWindowShouldClose(window, GL_TRUE);
@@ -165,32 +174,27 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
-    bool bFillShape = true;
-    bool bMinusInput = false;
+    glScalef(600.f / float(SCREEN_HEIGHT), 600.f / float(SCREEN_WIDTH), 600.f / float(SCREEN_HEIGHT));
+
+    S_Inputs inputs;
 
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
 
-        glClear(GL_COLOR_BUFFER_BIT  | GL_DEPTH_BUFFER_BIT);
-        glClearColor(0.5f, 0.5f, 0.5f, 1.f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //glClearColor(0.5f, 0.5f, 0.5f, 1.f);
         glColor3f(0xFF, 0xFF, 0xFF);
 
-        moveShape(window);
+        moveShape(window, inputs);
 
         updateColor(window);
 
-        if (glfwGetKey(window, GLFW_KEY_MINUS) && glfwGetKey(window, GLFW_KEY_MINUS) != bMinusInput)
-        {
-            bFillShape = !bFillShape; 
-            bMinusInput =  true;
-        }
-        else if (!glfwGetKey(window, GLFW_KEY_MINUS))
-            bMinusInput = false;
+        inputs.showEdges.input(glfwGetKey(window, GLFW_KEY_M));
 
-        GLenum drawMode = bFillShape ? GL_LINE_LOOP : GL_TRIANGLE_FAN;
+        GLenum drawMode = inputs.showEdges.isOn ? GL_LINE_LOOP : GL_TRIANGLE_FAN;
 
-        drawShapes(window, drawMode);
+        drawShapes(window, drawMode, inputs.showEdges.isOn);
 
         glfwSwapBuffers(window);
     }

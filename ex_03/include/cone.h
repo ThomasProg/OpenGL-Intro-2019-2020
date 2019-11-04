@@ -4,6 +4,9 @@
 #include "macros.h"
 #include "mesh.h"
 
+//constexpr float h = -0.2f;
+constexpr float h = 1.f;
+
 //cut 
 void drawConeCut(unsigned int nbPoints, GLenum drawMode = GL_TRIANGLE_FAN, float x = 0, float y = 0, float z = 0)
 {

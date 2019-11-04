@@ -15,13 +15,11 @@ struct Vector3
 
 struct Mesh
 {
-    bool bDraw = false;
+    bool bDraw = true;
 	std::vector<Vector3> vertices;
 	std::vector<unsigned int> triangles;
 
     GLenum drawMode = GL_TRIANGLE_FAN;
-    Vector3 relativeLoc = {0.f, 0.f, 0.f};
-    Vector3 relativeScale = {1.f, 1.f, 1.f};
 
 	void addTriangle(unsigned int a, unsigned int b, unsigned int c)
 	{
@@ -55,14 +53,17 @@ struct Mesh
     void draw()
     {
         glBegin(drawMode);
+        Vector3 p1 = {0.f, 0.f, 0.f};
         for (unsigned int i = 0; i < triangles.size(); i+=3)
         {
-            Vector3 p1 = vertices.at(triangles.at(i));
+            p1 = vertices.at(triangles.at(i));
             color(p1.x, p1.y, p1.z);
             glVertex3d(p1.x, p1.y, p1.z);
+            
             p1 = vertices.at(triangles.at(i+1));
             color(p1.x, p1.y, p1.z);
             glVertex3d(p1.x, p1.y, p1.z);
+
             p1 = vertices.at(triangles.at(i+2));
             color(p1.x, p1.y, p1.z);
             glVertex3d(p1.x, p1.y, p1.z);

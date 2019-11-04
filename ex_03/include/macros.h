@@ -19,6 +19,4 @@ constexpr float SHAPE_SCREEN_SIZE_X = SHAPE_SIZE / SCREEN_WIDTH;
 constexpr float SHAPE_SCREEN_SIZE_Y = SHAPE_SIZE / SCREEN_HEIGHT;
 constexpr float SHAPE_SCREEN_SIZE_Z = SHAPE_SIZE / SCREEN_HEIGHT;
 
-constexpr float h = -0.2f;
-
 #endif

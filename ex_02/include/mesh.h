@@ -20,8 +20,6 @@ struct Mesh
 	std::vector<unsigned int> triangles;
 
     GLenum drawMode = GL_TRIANGLE_FAN;
-    Vector3 relativeLoc = {0.f, 0.f, 0.f};
-    Vector3 relativeScale = {1.f, 1.f, 1.f};
 
 	void addTriangle(unsigned int a, unsigned int b, unsigned int c)
 	{
