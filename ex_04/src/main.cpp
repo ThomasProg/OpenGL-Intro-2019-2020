@@ -151,6 +151,18 @@ void drawShapes(GLFWwindow* window, GLenum drawMode = GL_TRIANGLE_FAN, bool show
     }
 }
 
+struct vec2
+{
+    float x, y;
+    vec2(float x, float y) : x(x), y(y) {}
+};
+
+struct S_Path
+{
+    std::vector<vec2> points;
+    bool bIsOpen = false;
+};
+
 int main()
 {
     if (!glfwInit())
@@ -177,6 +189,7 @@ int main()
     glScalef(600.f / float(SCREEN_HEIGHT), 600.f / float(SCREEN_WIDTH), 600.f / float(SCREEN_HEIGHT));
 
     S_Inputs inputs;
+    S_Path   path;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -193,7 +206,49 @@ int main()
         updateColor(window);
 
         inputs.showEdges.input(glfwGetKey(window, GLFW_KEY_M));
-        //GLenum drawMode = inputs.showEdges.isOn ? GL_LINE_LOOP : GL_TRIANGLE_FAN;
+        GLenum drawMode = inputs.showEdges.isOn ? GL_LINE_LOOP : GL_TRIANGLE_FAN;
+
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))
+        {
+            double xpos, ypos;
+            glfwGetCursorPos(window, &xpos, &ypos);
+            path.points.push_back(vec2(xpos, ypos));
+        }
+
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT))
+        {
+            double xpos, ypos;
+            glfwGetCursorPos(window, &xpos, &ypos);
+            //std::cout << xpos << " / " << ypos << std::endl;
+            path.points.push_back(vec2(xpos, ypos));
+            path.bIsOpen = true;
+        }
+
+        if (path.bIsOpen)
+        {
+            glBegin(GL_LINE_STRIP);
+            for (unsigned int i = 0; i < path.points.size(); i++)
+            {
+                float ratio = float(i) / float(path.points.size());
+                //if (path.points.size() - i < 300)
+                {
+                    glColor4f(1.f - ratio, 0.f, ratio, ratio);
+                    //glColor3f(1.f, 1.f, 1.f);
+                    float x = path.points[i].x;
+                    float y = path.points[i].y;
+                    x /= float(SCREEN_WIDTH);
+                    y /= float(SCREEN_HEIGHT);
+                    x -= 0.5f;
+                    y -= 0.5f;
+                    y *= -1;
+                    glVertex3f(x, y, 0);
+                //std::cout << path.points[i].x << " / " << path.points[i].y << std::endl;
+                }
+            }
+            glEnd();
+        }
+
+        drawShapes(window, drawMode, inputs.showEdges.isOn);
 
 
         glfwSwapBuffers(window);
