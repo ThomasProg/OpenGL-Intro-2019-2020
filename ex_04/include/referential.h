@@ -4,11 +4,8 @@
 #include "macros.h"
 #include "cone.h"
 
-void drawRef(unsigned int i = 0)
+void drawRef()
 {
-    if (i > 5)
-        return;
-
     constexpr unsigned int precision = 10;
 
     glBegin(GL_LINES);
@@ -62,14 +59,6 @@ void drawRef(unsigned int i = 0)
         drawCone(precision, cone);
         glPopMatrix();
     }
-
-    glPushMatrix();
-    glTranslatef(0.f, 1.8f, 0.f);
-    glScalef(0.95f, 0.9f, 1.1f);
-
-    drawRef(i+1);
-
-    glPopMatrix();
 }
 
 #endif

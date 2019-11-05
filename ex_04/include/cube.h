@@ -8,6 +8,11 @@ struct vec3
 {
     float x, y, z;
     vec3(float x, float y, float z) : x(x), y(y), z(z) {}
+
+    vec3 operator-(const vec3& v)
+    {
+        return vec3(x+v.x, y + v.y, z + v.z);
+    }
 };
 
 void addTriangle(const vec3& v1, const vec3& v2, const vec3& v3)

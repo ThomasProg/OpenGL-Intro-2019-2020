@@ -7,7 +7,7 @@ CC=gcc
 CXX=g++
 
 LDLIBS=-Llib -lglfw -lGL -lGLU -ldl
-OBJS=src/glad.o src/main.o #src/primitives.o
+OBJS=src/glad.o src/main.o#src/primitives.o
 DEPS=$(OBJS:.o=.d)
 
 .PHONY: all clean
