@@ -26,45 +26,63 @@ struct S_Inputs
     S_DoOnce showEdges;
 };
 
-void moveShape(GLFWwindow* window, S_Inputs& inputs)
+void moveShape(GLFWwindow* window, S_Inputs& inputs, Mesh& mesh)
 {
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT))
-    {
-        if (glfwGetKey(window, GLFW_KEY_RIGHT))
-        {
-            glTranslated(1/100.0, 0, 0.0);
-        }
-        if (glfwGetKey(window, GLFW_KEY_LEFT))
-        {
-            glTranslated(-1.0/100, 0, 0.0);
-        }
-        if (glfwGetKey(window, GLFW_KEY_UP))
-        {
-            glTranslated(0.0, 0, 1/100);
-        }
-        if (glfwGetKey(window, GLFW_KEY_DOWN))
-        {
-            glTranslated(0.0, 0, -1/100);
-        }
-    }
+    // if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT))
+    // {
+    //     if (glfwGetKey(window, GLFW_KEY_RIGHT))
+    //     {
+    //         glTranslated(1/100.0, 0, 0.0);
+    //     }
+    //     if (glfwGetKey(window, GLFW_KEY_LEFT))
+    //     {
+    //         glTranslated(-1.0/100, 0, 0.0);
+    //     }
+    //     if (glfwGetKey(window, GLFW_KEY_UP))
+    //     {
+    //         glTranslated(0.0, 0, 1/100);
+    //     }
+    //     if (glfwGetKey(window, GLFW_KEY_DOWN))
+    //     {
+    //         glTranslated(0.0, 0, -1/100);
+    //     }
+    // }
 
     inputs.x.input(glfwGetKey(window, GLFW_KEY_X));
     if (inputs.x.isOn)
+    {
         glRotated(rotationSpeed, 1.f, 0.f, 0.f);
+        mesh.rotation.x+=1.f;
+    }
 
     inputs.y.input(glfwGetKey(window, GLFW_KEY_Y));
     if (inputs.y.isOn)
+    {
         glRotated(rotationSpeed, 0.f, 1.f, 0.f);
+        mesh.rotation.y += 1.f;
+    }
     
     inputs.z.input(glfwGetKey(window, GLFW_KEY_Z));
     if (inputs.z.isOn)
+    {
         glRotated(rotationSpeed, 0.f, 0.f, 1.f);
+        mesh.rotation.z += 1.f;
+    }
     
-
     if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) || glfwGetKey(window, GLFW_KEY_MINUS))
+    {
         glScalef(1.f - scaleSpeed, 1.f - scaleSpeed, 1.f - scaleSpeed);
+        mesh.scale.x *= 1.f - scaleSpeed;
+        mesh.scale.y *= 1.f - scaleSpeed;
+        mesh.scale.z *= 1.f - scaleSpeed;
+    }
     if (glfwGetKey(window, GLFW_KEY_KP_ADD)  || glfwGetKey(window, GLFW_KEY_EQUAL))
+    {
         glScalef(1.f + scaleSpeed, 1.f + scaleSpeed, 1.f + scaleSpeed);
+        mesh.scale.x *= 1.f + scaleSpeed;
+        mesh.scale.y *= 1.f + scaleSpeed;
+        mesh.scale.z *= 1.f + scaleSpeed;
+    }
 }
 
 void updateColor(GLFWwindow* window)
@@ -95,17 +113,18 @@ void updateColor(GLFWwindow* window)
     }
 }
 
-void drawShapes(GLFWwindow* window, GLenum drawMode = GL_TRIANGLE_FAN, bool showEdges = false)
+void drawShapes(GLFWwindow* window, Mesh& mesh, bool showEdges = false)
 {
     //drawCube();
-
-    Mesh mesh;
-    mesh.drawMode = drawMode;
 
     if (glfwGetKey(window, GLFW_KEY_1))
     {
         //sphere.bDraw = true;
-        UVSphere(100, 100, mesh);
+        if (!mesh.bIsSphere)
+        {
+            UVSphere(30, 30, mesh);
+            mesh.bIsSphere = true;
+        }
         mesh.draw();
     }
 
@@ -167,6 +186,18 @@ struct vec2
     {
         return vec2(x+v.x, y + v.y);
     }
+    double length()
+    {
+        return sqrt(pow(x,2) + pow(y,2));
+    }
+    vec2 unit()
+    {
+        double len = length();
+        if (len == 0)
+            return vec2(1,0); 
+        else
+            return vec2(x/len, y/len);
+    }
 };
 
 struct S_Path
@@ -185,8 +216,6 @@ struct S_Path
         double x, y;
         glfwGetCursorPos(window, &x, &y);
 
-        std::cout << x << " / Window : " << SCREEN_WIDTH << std::endl; 
-
         x -= double(SCREEN_WIDTH)/2.0;
         y -= double(SCREEN_HEIGHT)/2.0;
 
@@ -195,8 +224,6 @@ struct S_Path
 
         x *= 2;
         y *= 2;
-
-        std::cout << " / Final X : " << x << std::endl; 
 
         // x -= 0.5f;
         // y -= 0.5f;
@@ -238,8 +265,9 @@ int main()
 
     vec3 shapesLoc(0,0,0);
     unsigned int currentIntersectIndex = 0;
-    float shapeLocRatio = 0.f;
+    //float shapeLocRatio = 0.f;
 
+    Mesh mesh;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -249,12 +277,10 @@ int main()
         //glClearColor(0.5f, 0.5f, 0.5f, 1.f);
         glColor3f(0xFF, 0xFF, 0xFF);
 
-        moveShape(window, inputs);
-
         updateColor(window);
 
         inputs.showEdges.input(glfwGetKey(window, GLFW_KEY_M));
-        GLenum drawMode = inputs.showEdges.isOn ? GL_LINE_LOOP : GL_TRIANGLE_FAN;
+        mesh.drawMode = inputs.showEdges.isOn ? GL_LINE_LOOP : GL_TRIANGLE_FAN;
 
         inputs.leftMouseClick.input(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT));
 
@@ -270,42 +296,22 @@ int main()
                 path.bIsOpen = true;
         };
 
-        // if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT))
-        // {
-        //     // double xpos, ypos;
-        //     // glfwGetCursorPos(window, &xpos, &ypos);
-        //     // path.points.push_back(vec2(xpos, ypos));
-        //     path.addPoint(window);
-        // }
-
-        // if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT))
-        // {
-        //     // double xpos, ypos;
-        //     // glfwGetCursorPos(window, &xpos, &ypos);
-        //     // //std::cout << xpos << " / " << ypos << std::endl;
-        //     // path.points.push_back(vec2(xpos, ypos));
-        //     path.addPoint(window);
-        //     path.bIsOpen = true;
-        // }
+        drawRef();
 
         if (path.bIsOpen)
         {
             glPushMatrix();
             glScalef(float(SCREEN_HEIGHT) / 600.f, float(SCREEN_WIDTH) / 600.f, float(SCREEN_HEIGHT) / 600.f);
 
-            glBegin(GL_LINE_STRIP);
+            glBegin(GL_LINE_LOOP);
             for (unsigned int i = 0; i < path.points.size(); i++)
             {
                 float ratio = float(i) / float(path.points.size());
-                // ratio = (float(path.points.size()) - float(i)) / 10.f;
-                // if (path.points.size() - i < 10)
                 {
                     glColor4f(1.f - ratio, 0.f, ratio, ratio);
-                    //glColor3f(1.f, 1.f, 1.f);
                     float x = path.points[i].x;
                     float y = path.points[i].y;
                     glVertex3f(x, y, 0);
-                //std::cout << path.points[i].x << " / " << path.points[i].y << std::endl;
                 }
             }
             glEnd();
@@ -313,28 +319,40 @@ int main()
         }
 
         {
-            if (path.points.size() != 0)
+            if (path.points.size() != 0 && path.bIsOpen)
             {
                 glPushMatrix();
-                glScalef(0.5f, 0.5f, 0.5f);
-                vec2 translation = path.points[currentIntersectIndex] - path.points[(currentIntersectIndex + 1) % path.points.size()];
-                while (abs(translation.x) < 10 && abs(translation.y) < 10)
+
+                vec2 translation(0,0);
+                translation.x = shapesLoc.x - path.points[(currentIntersectIndex + 1) % path.points.size()].x;
+                translation.y = shapesLoc.y - path.points[(currentIntersectIndex + 1) % path.points.size()].y;
+
+                unsigned int i = currentIntersectIndex;
+                while (vec2(translation.x, translation.y).length() < 0.03 && (currentIntersectIndex + 1) % path.points.size() != i)
                 {
                     currentIntersectIndex++;
-                    translation = path.points[currentIntersectIndex] - path.points[(currentIntersectIndex + 1) % path.points.size()];
-                    shapeLocRatio = 0.f;
+                    currentIntersectIndex%= path.points.size();
+                    translation.x = shapesLoc.x - path.points[(currentIntersectIndex + 1) % path.points.size()].x;
+                    translation.y = shapesLoc.y - path.points[(currentIntersectIndex + 1) % path.points.size()].y;
                 }
-                translation = path.points[(currentIntersectIndex + 1) % path.points.size()];
-                // translation.x *= 0.01;//scale
-                // translation.y *= 0.01;//scale
-                glTranslatef(shapesLoc.x, 0, 0);
-                shapesLoc.x = translation.x * shapeLocRatio;
-                shapesLoc.y = translation.y * shapeLocRatio;
+                translation = translation.unit();
+                translation.x *= -0.01;
+                translation.y *= -0.01;
+                glTranslatef(shapesLoc.x + translation.x, shapesLoc.y + translation.y, 0);
+                shapesLoc.x += translation.x;
+                shapesLoc.y += translation.y;
 
-                std::cout << translation.x << std::endl;
-                shapeLocRatio += 0.01;
+                glScalef(0.1, 0.1, 0.1);
+                moveShape(window, inputs, mesh);
+                glTranslatef(mesh.location.x, mesh.location.y, mesh.location.z);
+                glScalef(mesh.scale.x, mesh.scale.y, mesh.scale.z);
+                glRotated(mesh.rotation.x, 1, 0, 0);
+                glRotated(mesh.rotation.y, 0, 1, 0);
+                glRotated(mesh.rotation.z, 0, 0, 1);
 
-                drawShapes(window, drawMode, inputs.showEdges.isOn);
+                drawShapes(window, mesh, inputs.showEdges.isOn);
+                if (glfwGetKey(window, GLFW_KEY_3))
+                    drawRef();
 
                 glPopMatrix();
             }

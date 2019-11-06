@@ -21,6 +21,14 @@ struct Mesh
 
     GLenum drawMode = GL_TRIANGLE_FAN;
 
+    Vector3 location = Vector3(0);
+    Vector3 rotation = Vector3(0);
+    Vector3 scale    = Vector3(1);
+
+    bool bIsSphere = false;
+
+    Mesh() {}
+
 	void addTriangle(unsigned int a, unsigned int b, unsigned int c)
 	{
 		triangles.emplace_back(a);
