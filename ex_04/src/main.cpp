@@ -28,57 +28,37 @@ struct S_Inputs
 
 void moveShape(GLFWwindow* window, S_Inputs& inputs, Mesh& mesh)
 {
-    // if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT))
-    // {
-    //     if (glfwGetKey(window, GLFW_KEY_RIGHT))
-    //     {
-    //         glTranslated(1/100.0, 0, 0.0);
-    //     }
-    //     if (glfwGetKey(window, GLFW_KEY_LEFT))
-    //     {
-    //         glTranslated(-1.0/100, 0, 0.0);
-    //     }
-    //     if (glfwGetKey(window, GLFW_KEY_UP))
-    //     {
-    //         glTranslated(0.0, 0, 1/100);
-    //     }
-    //     if (glfwGetKey(window, GLFW_KEY_DOWN))
-    //     {
-    //         glTranslated(0.0, 0, -1/100);
-    //     }
-    // }
-
     inputs.x.input(glfwGetKey(window, GLFW_KEY_X));
     if (inputs.x.isOn)
     {
-        glRotated(rotationSpeed, 1.f, 0.f, 0.f);
+        //glRotated(rotationSpeed, 1.f, 0.f, 0.f);
         mesh.rotation.x+=1.f;
     }
 
     inputs.y.input(glfwGetKey(window, GLFW_KEY_Y));
     if (inputs.y.isOn)
     {
-        glRotated(rotationSpeed, 0.f, 1.f, 0.f);
+        //glRotated(rotationSpeed, 0.f, 1.f, 0.f);
         mesh.rotation.y += 1.f;
     }
     
     inputs.z.input(glfwGetKey(window, GLFW_KEY_Z));
     if (inputs.z.isOn)
     {
-        glRotated(rotationSpeed, 0.f, 0.f, 1.f);
+        //glRotated(rotationSpeed, 0.f, 0.f, 1.f);
         mesh.rotation.z += 1.f;
     }
     
     if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) || glfwGetKey(window, GLFW_KEY_MINUS))
     {
-        glScalef(1.f - scaleSpeed, 1.f - scaleSpeed, 1.f - scaleSpeed);
+        //glScalef(1.f - scaleSpeed, 1.f - scaleSpeed, 1.f - scaleSpeed);
         mesh.scale.x *= 1.f - scaleSpeed;
         mesh.scale.y *= 1.f - scaleSpeed;
         mesh.scale.z *= 1.f - scaleSpeed;
     }
     if (glfwGetKey(window, GLFW_KEY_KP_ADD)  || glfwGetKey(window, GLFW_KEY_EQUAL))
     {
-        glScalef(1.f + scaleSpeed, 1.f + scaleSpeed, 1.f + scaleSpeed);
+        //glScalef(1.f + scaleSpeed, 1.f + scaleSpeed, 1.f + scaleSpeed);
         mesh.scale.x *= 1.f + scaleSpeed;
         mesh.scale.y *= 1.f + scaleSpeed;
         mesh.scale.z *= 1.f + scaleSpeed;
@@ -120,17 +100,21 @@ void drawShapes(GLFWwindow* window, Mesh& mesh, bool showEdges = false)
     if (glfwGetKey(window, GLFW_KEY_1))
     {
         //sphere.bDraw = true;
-        if (!mesh.bIsSphere)
-        {
-            UVSphere(30, 30, mesh);
-            mesh.bIsSphere = true;
-        }
+        //if (!mesh.bIsSphere)
+        //{
+        //Construct::UVSphere(30, 30, mesh);
+        mesh.set(E_MeshType::E_SPHERE);
+        //    mesh.bIsSphere = true;
+        //}
         mesh.draw();
     }
 
     if (glfwGetKey(window, GLFW_KEY_2))
     {
-        drawCube(showEdges);
+        mesh.set(E_MeshType::E_CUBE);
+        mesh.draw();
+        //drawCube(showEdges);
+        //Construct::cube(mesh);
     }
 
     if (glfwGetKey(window, GLFW_KEY_3))
@@ -263,7 +247,7 @@ int main()
     S_Inputs inputs;
     S_Path   path;
 
-    vec3 shapesLoc(0,0,0);
+    Vector3 shapesLoc(0,0,0);
     unsigned int currentIntersectIndex = 0;
     //float shapeLocRatio = 0.f;
 
@@ -280,7 +264,8 @@ int main()
         updateColor(window);
 
         inputs.showEdges.input(glfwGetKey(window, GLFW_KEY_M));
-        mesh.drawMode = inputs.showEdges.isOn ? GL_LINE_LOOP : GL_TRIANGLE_FAN;
+        //mesh.drawMode = inputs.showEdges.isOn ? GL_LINE_LOOP : GL_TRIANGLE_FAN;
+        mesh.bShowEdges = inputs.showEdges.isOn;
 
         inputs.leftMouseClick.input(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT));
 
@@ -344,11 +329,12 @@ int main()
 
                 glScalef(0.1, 0.1, 0.1);
                 moveShape(window, inputs, mesh);
-                glTranslatef(mesh.location.x, mesh.location.y, mesh.location.z);
-                glScalef(mesh.scale.x, mesh.scale.y, mesh.scale.z);
-                glRotated(mesh.rotation.x, 1, 0, 0);
-                glRotated(mesh.rotation.y, 0, 1, 0);
-                glRotated(mesh.rotation.z, 0, 0, 1);
+                mesh.useTransform();
+                // glTranslatef(mesh.location.x, mesh.location.y, mesh.location.z);
+                // glScalef(mesh.scale.x, mesh.scale.y, mesh.scale.z);
+                // glRotated(mesh.rotation.x, 1, 0, 0);
+                // glRotated(mesh.rotation.y, 0, 1, 0);
+                // glRotated(mesh.rotation.z, 0, 0, 1);
 
                 drawShapes(window, mesh, inputs.showEdges.isOn);
                 if (glfwGetKey(window, GLFW_KEY_3))

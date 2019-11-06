@@ -13,27 +13,50 @@ struct Vector3
 	Vector3 operator *(const Vector3 &other) const { return Vector3(x * other.x, y * other.y, z * other.z); }
 };
 
+enum class E_MeshType : unsigned int
+{
+    E_EMPTY,
+    E_CUBE,
+    E_SPHERE
+};
+
 struct Mesh
 {
     bool bDraw = true;
 	std::vector<Vector3> vertices;
 	std::vector<unsigned int> triangles;
 
-    GLenum drawMode = GL_TRIANGLE_FAN;
+    //GLenum drawMode = GL_TRIANGLE_FAN;
+    bool bShowEdges = false;
 
     Vector3 location = Vector3(0);
     Vector3 rotation = Vector3(0);
     Vector3 scale    = Vector3(1);
 
     bool bIsSphere = false;
+    E_MeshType type = E_MeshType::E_EMPTY;
 
     Mesh() {}
+
+    ~Mesh() {}
+
+    void set(E_MeshType type);
 
 	void addTriangle(unsigned int a, unsigned int b, unsigned int c)
 	{
 		triangles.emplace_back(a);
 		triangles.emplace_back(b);
 		triangles.emplace_back(c);
+	}
+
+	void addTriangle(Vector3 a, Vector3 b, Vector3 c)
+	{
+        triangles.emplace_back(vertices.size());
+		vertices.emplace_back(a);
+        triangles.emplace_back(vertices.size());
+		vertices.emplace_back(b);
+        triangles.emplace_back(vertices.size());
+		vertices.emplace_back(c);
 	}
 
 	void addQuad(unsigned int a, unsigned int b, unsigned int c, unsigned int d)
@@ -47,6 +70,13 @@ struct Mesh
 		triangles.emplace_back(d);
 	}
 
+	void addQuad(Vector3 a, Vector3 b, Vector3 c, Vector3 d)
+	{
+        addTriangle(a, b, c);
+
+        addTriangle(a, c, d);
+	}
+
     void color(float x, float y, float z)
     {
         if (bDraw)
@@ -58,9 +88,22 @@ struct Mesh
         }
     }
 
+    void useTransform()
+    {
+        glTranslatef(location.x, location.y, location.z);
+        glScalef(scale.x, scale.y, scale.z);
+        glRotatef(rotation.x, 1, 0, 0);
+        glRotatef(rotation.y, 0, 1, 0);
+        glRotatef(rotation.z, 0, 0, 1);
+    }
+
     void draw()
     {
-        glBegin(drawMode);
+        if (bShowEdges)
+            glBegin(GL_LINE_LOOP);
+        else 
+            glBegin(GL_TRIANGLES);
+            
         Vector3 p1 = {0.f, 0.f, 0.f};
         for (unsigned int i = 0; i < triangles.size(); i+=3)
         {

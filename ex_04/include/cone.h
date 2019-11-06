@@ -55,12 +55,17 @@ void drawConeCut(unsigned int nbPoints, GLenum drawMode = GL_TRIANGLE_FAN, float
 
 void drawCone(unsigned int nbPoints, Mesh& mesh) 
 {
-    if (mesh.drawMode == GL_TRIANGLE_FAN)
+    //if (mesh.drawMode == GL_TRIANGLE_FAN)
+    if (mesh.bShowEdges)
         glBegin(GL_TRIANGLE_FAN);
     else
         glBegin(GL_LINE_LOOP);
 
-    GLenum& drawMode = mesh.drawMode;
+    GLenum drawMode;// = mesh.drawMode;
+    if (mesh.bShowEdges)
+        drawMode = GL_TRIANGLE_FAN;
+    else 
+        drawMode = GL_LINE_LOOP;
     // double& x = mesh.relativeLoc.x;
     // double& y = mesh.relativeLoc.y;
     // double& z = mesh.relativeLoc.z;
