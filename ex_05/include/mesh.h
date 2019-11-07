@@ -36,6 +36,8 @@ struct Mesh
     bool bIsSphere = false;
     E_MeshType type = E_MeshType::E_EMPTY;
 
+    unsigned int textureID = 0;
+
     Mesh() {}
 
     ~Mesh() {}
@@ -97,24 +99,48 @@ struct Mesh
         glRotatef(rotation.z, 0, 0, 1);
     }
     
-    void draw()
+    void setTexture(GLuint id)
     {
-        //if (type == E_MeshType::E_CUBE)
-        
-            GLuint texture;
-            glEnable(GL_TEXTURE_2D);
-            glGenTextures(1, &texture);
-            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glBindTexture(GL_TEXTURE_2D, id);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
+        if (id == 0)
+        {
             float pixels[] = {
                 0.0f, 0.0f, 0.0f,   1.0f, 1.0f, 1.0f,
                 1.0f, 1.0f, 1.0f,   0.0f, 0.0f, 0.0f
             };
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels); 
+        }
+        if (id == 1)
+        {
+            float pixels[] = {
+                1.0f, 0.0f, 0.0f,   1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f,   1.0f, 0.0f, 0.0f
+            };
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels); 
+        }
+        if (id == 2)
+        {
+            float pixels[] = {
+                0.0f, 1.0f, 0.0f,   1.0f, 1.0f, 1.0f,
+                1.0f, 1.0f, 1.0f,   0.0f, 1.0f, 0.0f
+            };
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 2, 2, 0, GL_RGB, GL_FLOAT, pixels); 
+        }
+    }
+
+    void draw()
+    {
+        //if (type == E_MeshType::E_CUBE)
         
+            GLuint texture[3];
+            glEnable(GL_TEXTURE_2D);
+            glGenTextures(1, texture);
+            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            setTexture(textureID);
+            glColor3f(1, 1, 1);
 
         if (bShowEdges)
             glBegin(GL_LINE_LOOP);
@@ -132,12 +158,12 @@ struct Mesh
             
             p1 = vertices.at(triangles.at(i+1));
             //color(p1.x, p1.y, p1.z);
-            glTexCoord2d(0, 10);
+            glTexCoord2d(0, 1);
             glVertex3d(p1.x, p1.y, p1.z);
 
             p1 = vertices.at(triangles.at(i+2));
             //color(p1.x, p1.y, p1.z);
-            glTexCoord2d(10, 0);
+            glTexCoord2d(1, 0);
             glVertex3d(p1.x, p1.y, p1.z);
         }
         else 
@@ -145,7 +171,7 @@ struct Mesh
             {
                 p1 = vertices.at(triangles.at(i));
                 //color(p1.x, p1.y, p1.z);
-                glTexCoord2d(0, 10);
+                glTexCoord2d(0, 1);
                 glVertex3d(p1.x, p1.y, p1.z);
                 
                 p1 = vertices.at(triangles.at(i+1));
@@ -155,24 +181,24 @@ struct Mesh
 
                 p1 = vertices.at(triangles.at(i+2));
                 //color(p1.x, p1.y, p1.z);
-                glTexCoord2d(10, 0);
+                glTexCoord2d(1, 0);
                 glVertex3d(p1.x, p1.y, p1.z);
 
 
 
                 p1 = vertices.at(triangles.at(i+3));
                 //color(p1.x, p1.y, p1.z);
-                glTexCoord2d(0, 10);
+                glTexCoord2d(0, 1);
                 glVertex3d(p1.x, p1.y, p1.z);
                 
                 p1 = vertices.at(triangles.at(i+4));
                 //color(p1.x, p1.y, p1.z);
-                glTexCoord2d(10, 0);
+                glTexCoord2d(1, 0);
                 glVertex3d(p1.x, p1.y, p1.z);
 
                 p1 = vertices.at(triangles.at(i+5));
                 //color(p1.x, p1.y, p1.z);
-                glTexCoord2d(10, 10);
+                glTexCoord2d(1, 1);
                 glVertex3d(p1.x, p1.y, p1.z);
             }
 

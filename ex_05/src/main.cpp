@@ -262,6 +262,12 @@ int main()
         glColor3f(0xFF, 0xFF, 0xFF);
 
         updateColor(window);
+        if (glfwGetKey(window, GLFW_KEY_A))
+            mesh.textureID = 0;
+        else if (glfwGetKey(window, GLFW_KEY_B))
+            mesh.textureID = 1;
+        else if (glfwGetKey(window, GLFW_KEY_C))
+            mesh.textureID = 2; 
 
         inputs.showEdges.input(glfwGetKey(window, GLFW_KEY_M));
         //mesh.drawMode = inputs.showEdges.isOn ? GL_LINE_LOOP : GL_TRIANGLE_FAN;
