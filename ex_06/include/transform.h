@@ -9,6 +9,25 @@ struct Vector3
 	Vector3 operator +(const Vector3 &other) const { return Vector3(x + other.x, y + other.y, z + other.z); }
 	Vector3 operator -(const Vector3 &other) const { return Vector3(x - other.x, y - other.y, z - other.z); }
 	Vector3 operator *(const Vector3 &other) const { return Vector3(x * other.x, y * other.y, z * other.z); }
+	Vector3 operator /(const Vector3 &other) const { return Vector3(x / other.x, y / other.y, z / other.z); }
+};
+
+struct Vector3Int
+{
+    int x, y, z;
+    Vector3Int(int ix, int iy, int iz) : x(ix), y(iy), z(iz) {}
+	Vector3Int(double ix, double iy, double iz) : x(floor(ix)), y(floor(iy)), z(floor(iz)) {}
+	Vector3Int(Vector3 v) : x(floor(v.x)), y(floor(v.y)), z(floor(v.z)) {}
+
+    bool operator!=(Vector3Int& b)
+    {
+        return x != b.x || y != b.y || z != b.z;
+    }
+
+    bool operator==(Vector3Int& b)
+    {
+        return x == b.x && y == b.y && z == b.z;
+    }    
 };
 
 struct vec2

@@ -1,21 +1,51 @@
 #ifndef _MESH_H_
 #define _MESH_H_
 
+#include <functional>
 #include "macros.h"
 #include "transform.h"
 
-enum class E_MeshType : unsigned int
+enum class E_MeshType : char
 {
     E_EMPTY,
     E_CUBE,
-    E_SPHERE
+    E_SPHERE,
+    E_MAZE,
+};
+
+enum class E_VerticesType : char
+{
+    E_LINES,
+    E_TRIANGLES,
+    E_QUAD,
 };
 
 struct Mesh
 {
+private:
+	void addQuad_triVersion(Vector3 a, Vector3 b, Vector3 c, Vector3 d)
+	{
+        addTriangle(a, b, c);
+
+        addTriangle(a, c, d);
+	}
+	void addQuad_quadVersion(Vector3 a, Vector3 b, Vector3 c, Vector3 d)
+	{
+        triangles.emplace_back(vertices.size());
+		vertices.emplace_back(a);
+        triangles.emplace_back(vertices.size());
+		vertices.emplace_back(b);
+        triangles.emplace_back(vertices.size());
+		vertices.emplace_back(c);
+        triangles.emplace_back(vertices.size());
+		vertices.emplace_back(d);
+	}
+
+public:
     bool bDraw = true;
 	std::vector<Vector3> vertices;
 	std::vector<unsigned int> triangles;
+    E_VerticesType typeOfVerticies = E_VerticesType::E_TRIANGLES;
 
     //GLenum drawMode = GL_TRIANGLE_FAN;
     bool bShowEdges = false;
@@ -29,7 +59,7 @@ struct Mesh
 
     ~Mesh() {}
 
-    void set(E_MeshType type);
+    void setMesh(E_MeshType type);
 
 	void addTriangle(unsigned int a, unsigned int b, unsigned int c)
 	{
@@ -59,12 +89,23 @@ struct Mesh
 		triangles.emplace_back(d);
 	}
 
+    //void (Mesh::*addQuad) (Vector3, Vector3, Vector3, Vector3) = &Mesh::addQuad_triVersion;
 	void addQuad(Vector3 a, Vector3 b, Vector3 c, Vector3 d)
 	{
-        addTriangle(a, b, c);
+        switch (typeOfVerticies)
+        {
+            case E_VerticesType::E_TRIANGLES :
+                addQuad_triVersion(a, b, c, d);
+                break;
 
-        addTriangle(a, c, d);
+            case E_VerticesType::E_QUAD :
+                addQuad_quadVersion(a, b, c, d);
+                break;
+            default:;
+        }
 	}
+
+
 
     void color(float x, float y, float z)
     {
@@ -82,7 +123,7 @@ struct Mesh
         transform.use();
     }
     
-    void draw()
+    void draw_triVersion()
     {
         //if (type == E_MeshType::E_CUBE)
         
@@ -169,7 +210,74 @@ struct Mesh
             glDisable(GL_TEXTURE_2D);
         }
     }
+
+    void draw_quadVersion()
+    {
+       if (bShowEdges)
+            glBegin(GL_LINE_LOOP);
+        else 
+            glBegin(GL_TRIANGLES);
+            
+        Vector3 p1 = {0.f, 0.f, 0.f};
+        //since we know that triangles.size() is a multiple of 4 (it contains quads),
+        //we do a loop unrolling for optimization
+        for (unsigned int i = 0; i < triangles.size(); i+=4)
+        {
+            // b --- c
+            // |   / |
+            // | /   |
+            // a --- d
+
+            // a - b - c
+            p1 = vertices.at(triangles.at(i));
+            color(p1.x, p1.y, p1.z);
+            //glTexCoord2d(0, 0);
+            glVertex3d(p1.x, p1.y, p1.z);
+            
+            p1 = vertices.at(triangles.at(i+1));
+            color(p1.x, p1.y, p1.z);
+            //glTexCoord2d(0, 1);
+            glVertex3d(p1.x, p1.y, p1.z);
+
+            p1 = vertices.at(triangles.at(i+2));
+            color(p1.x, p1.y, p1.z);
+            //glTexCoord2d(1, 0);
+            glVertex3d(p1.x, p1.y, p1.z);
+
+            // a - c - d
+
+            p1 = vertices.at(triangles.at(i));
+            color(p1.x, p1.y, p1.z);
+            //glTexCoord2d(0, 0);
+            glVertex3d(p1.x, p1.y, p1.z);
+
+            p1 = vertices.at(triangles.at(i+2));
+            color(p1.x, p1.y, p1.z);
+            //glTexCoord2d(1, 0);
+            glVertex3d(p1.x, p1.y, p1.z);
+
+            p1 = vertices.at(triangles.at(i+3));
+            color(0, 0, 0);
+            //glTexCoord2d(1, 0);
+            glVertex3d(p1.x, p1.y, p1.z);
+        }
+        glEnd();
+    }
+
+    void draw()
+    {
+        switch (typeOfVerticies)
+        {
+            case E_VerticesType::E_TRIANGLES :
+                draw_triVersion();
+                break;
+
+            case E_VerticesType::E_QUAD :
+                draw_quadVersion();
+                break;
+            default:;
+        }
+    }
 };
 
 #endif
-

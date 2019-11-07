@@ -9,6 +9,7 @@
 #include "doOnce.h"
 #include "utilities.h"
 #include "camera.h"
+#include "maze.h"
 
 constexpr float rotationSpeed = 0.5f;
 constexpr float scaleSpeed = 1.f / 10.f;
@@ -104,7 +105,7 @@ void drawShapes(GLFWwindow* window, Mesh& mesh, bool showEdges = false)
         //if (!mesh.bIsSphere)
         //{
         //Construct::UVSphere(30, 30, mesh);
-        mesh.set(E_MeshType::E_SPHERE);
+        mesh.setMesh(E_MeshType::E_SPHERE);
         //    mesh.bIsSphere = true;
         //}
         mesh.draw();
@@ -112,7 +113,7 @@ void drawShapes(GLFWwindow* window, Mesh& mesh, bool showEdges = false)
 
     if (glfwGetKey(window, GLFW_KEY_2))
     {
-        mesh.set(E_MeshType::E_CUBE);
+        mesh.setMesh(E_MeshType::E_CUBE);
         mesh.draw();
         //drawCube(showEdges);
         //Construct::cube(mesh);
@@ -229,6 +230,7 @@ int main()
     Mesh mesh;
     Mesh playerMesh;
     Camera mainCamera;
+    Maze maze;
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     //glOrtho(-5, 5, -5, 5, -50, 50);
@@ -249,10 +251,10 @@ int main()
             // Set up projection
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity(); 
-            if (perspective)
-                gluPerspective(90, SCREEN_WIDTH / SCREEN_HEIGHT, 0.5, 100.f);
-            else
-                gluOrtho2D(-2.f, 2.f, 2.f / 90, 2.f / -90);
+            //if (perspective)
+                gluPerspective(90, SCREEN_WIDTH / SCREEN_HEIGHT, 0.001, 100.f);
+            //else
+            //    gluOrtho2D(-2.f, 2.f, 2.f / 90, 2.f / -90);
 
             // Set up model-view
             glMatrixMode(GL_MODELVIEW);
@@ -276,20 +278,23 @@ int main()
 
         mainCamera.inputs(window);
 
-        glPushMatrix();
-        mainCamera.transform.use();
-
-        mesh.set(E_MeshType::E_CUBE);
-        playerMesh.set(E_MeshType::E_CUBE);
-        glPushMatrix();
         glLoadIdentity();
-        glTranslatef(0,0,1);
-        playerMesh.useTransform();
+        mainCamera.useTransform();
+
+        glPushMatrix();
+        playerMesh.setMesh(E_MeshType::E_CUBE);
+        // glLoadIdentity();
+        // glTranslatef(0,0,1);
+        // playerMesh.useTransform();
         playerMesh.draw();
         glPopMatrix();
         //mesh.transform.location.x -= 0.003;
 
+        maze.render(mainCamera.transform.location);
+
         glPushMatrix();
+        //mesh.setMesh(E_MeshType::E_CUBE);
+        mesh.setMesh(E_MeshType::E_MAZE);
         glTranslatef(0, -1.9, 0);
         drawRef();
         glScalef(5,0.5,5);
@@ -377,8 +382,6 @@ int main()
         //         glPopMatrix();
         //     }
         // }
-
-        glPopMatrix();
 
         glfwSwapBuffers(window);
     }
