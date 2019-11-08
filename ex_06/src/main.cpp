@@ -67,33 +67,33 @@ void moveShape(GLFWwindow* window, S_Inputs& inputs, Mesh& mesh)
     }
 }
 
-void updateColor(GLFWwindow* window)
-{
-    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT))
-    {
-        if (glfwGetKey(window, GLFW_KEY_R))
-            glClearColor(0xFF, 0x00, 0x00, 0xFF);
+// void updateColor(GLFWwindow* window)
+// {
+//     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT))
+//     {
+//         if (glfwGetKey(window, GLFW_KEY_R))
+//             glClearColor(0xFF, 0x00, 0x00, 0xFF);
 
-        if (glfwGetKey(window, GLFW_KEY_G))
-            glClearColor(0x00, 0xFF, 0x00, 0xFF);
+//         if (glfwGetKey(window, GLFW_KEY_G))
+//             glClearColor(0x00, 0xFF, 0x00, 0xFF);
 
-        if (glfwGetKey(window, GLFW_KEY_B))
-        {
-            glClearColor(0x00, 0x00, 0xFF, 0xFF);
-        }
-    }
-    else
-    {
-        if (glfwGetKey(window, GLFW_KEY_R))
-            glColor3f(0xFF, 0x00, 0x00);
+//         if (glfwGetKey(window, GLFW_KEY_B))
+//         {
+//             glClearColor(0x00, 0x00, 0xFF, 0xFF);
+//         }
+//     }
+//     else
+//     {
+//         if (glfwGetKey(window, GLFW_KEY_R))
+//             glColor3f(0xFF, 0x00, 0x00);
 
-        if (glfwGetKey(window, GLFW_KEY_G))
-            glColor3f(0x00, 0xFF, 0x00);
+//         if (glfwGetKey(window, GLFW_KEY_G))
+//             glColor3f(0x00, 0xFF, 0x00);
 
-        if (glfwGetKey(window, GLFW_KEY_B))
-            glColor3f(0x00, 0x00, 0xFF);
-    }
-}
+//         if (glfwGetKey(window, GLFW_KEY_B))
+//             glColor3f(0x00, 0x00, 0xFF);
+//     }
+// }
 
 void drawShapes(GLFWwindow* window, Mesh& mesh, bool showEdges = false)
 {
@@ -195,6 +195,42 @@ void drawShapes(GLFWwindow* window, Mesh& mesh, bool showEdges = false)
 //     }
 // };
 
+void cameraCollisionWhileMoving(const Maze& maze, Camera& camera)
+{
+    Vector3 deltaLoc = camera.transform.location - camera.lastLocation;
+    Vector3 testedLocation = camera.lastLocation;
+
+    //We want the player to advance in every coordinates if possible.
+    //Also, we want to stop the play going to this direction if there is a collision.
+    //Hovever, we do not want the player to go into a block on a diagonale either.
+
+    //the camera takes the hitbox of a box (cube).
+    //constexpr float hitboxSize = 2.f; 
+
+    testedLocation.x += camera.hitboxSize * deltaLoc.x;
+    if (maze.isColliding(testedLocation))
+    {
+        camera.transform.location.x = camera.lastLocation.x;
+        testedLocation.x = camera.lastLocation.x;
+    }
+
+    testedLocation.y += camera.hitboxSize * deltaLoc.y;
+    if (maze.isColliding(testedLocation))
+    {
+        camera.transform.location.y = camera.lastLocation.y;
+        testedLocation.y = camera.lastLocation.y;
+    }
+
+    testedLocation.z += camera.hitboxSize * deltaLoc.z;
+    if (maze.isColliding(testedLocation))
+    {
+        camera.transform.location.z = camera.lastLocation.z;
+        testedLocation.z = camera.lastLocation.z;
+    }
+
+    camera.lastLocation = camera.transform.location;
+}
+
 int main()
 {
     if (!glfwInit())
@@ -236,11 +272,21 @@ int main()
     //glOrtho(-5, 5, -5, 5, -50, 50);
     //glLoadIdentity();
 
+    double previousTime = glfwGetTime();
+    glEnable(GL_FOG);
+
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        double time =  glfwGetTime();
+        mainCamera.deltaTime = time - previousTime;
+        std::cout << "FPS : " << 1/(time - previousTime) << std::endl;
+        previousTime = time;
+
+        //std::cout << "Player Loc : " << mainCamera.transform.location.x << std::endl;
 
         //camera
         {
@@ -251,10 +297,10 @@ int main()
             // Set up projection
             glMatrixMode(GL_PROJECTION);
             glLoadIdentity(); 
-            //if (perspective)
-                gluPerspective(90, SCREEN_WIDTH / SCREEN_HEIGHT, 0.001, 100.f);
-            //else
-            //    gluOrtho2D(-2.f, 2.f, 2.f / 90, 2.f / -90);
+            if (perspective)
+                gluPerspective(90, SCREEN_WIDTH / SCREEN_HEIGHT, 0.001, 60.f);
+            else
+               gluOrtho2D(-2.f, 2.f, 2.f / 90, 2.f / -90);
 
             // Set up model-view
             glMatrixMode(GL_MODELVIEW);
@@ -269,14 +315,24 @@ int main()
             glDisable(GL_BLEND);
             if (enableDepth)
                 glEnable(GL_DEPTH_TEST);
+
+            GLfloat fogColor[4] = {0.110*5, 0.177*5, 0.245*5, 1.0};
+            glFogi(GL_FOG_MODE, GL_LINEAR);
+            glFogfv(GL_FOG_COLOR, fogColor);
+            glFogf(GL_FOG_DENSITY, 1.f);
+            //glHint(GL_FOG_HINT, GL_DONT_CARE);
+            glFogf(GL_FOG_START, 10.0);
+            glFogf(GL_FOG_END, 20.0);
         }
 
         //glClearColor(0.5f, 0.5f, 0.5f, 1.f);
         glColor3f(0xFF, 0xFF, 0xFF);
-
-        updateColor(window);
+        glClearColor(0.110*5, 0.177*5, 0.245*5, 0xFF);
+        //updateColor(window);
 
         mainCamera.inputs(window);
+
+        cameraCollisionWhileMoving(maze, mainCamera);
 
         glLoadIdentity();
         mainCamera.useTransform();

@@ -19,15 +19,20 @@ struct Vector3Int
 	Vector3Int(double ix, double iy, double iz) : x(floor(ix)), y(floor(iy)), z(floor(iz)) {}
 	Vector3Int(Vector3 v) : x(floor(v.x)), y(floor(v.y)), z(floor(v.z)) {}
 
-    bool operator!=(Vector3Int& b)
+    bool operator!=(const Vector3Int& b) const
     {
         return x != b.x || y != b.y || z != b.z;
     }
 
-    bool operator==(Vector3Int& b)
+    bool operator==(const Vector3Int& b) const
     {
         return x == b.x && y == b.y && z == b.z;
     }    
+
+    Vector3Int operator%(const int& b) const
+    {
+        return Vector3Int(x % b, y % b, z % b);
+    }
 };
 
 struct vec2

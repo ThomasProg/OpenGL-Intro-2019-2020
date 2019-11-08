@@ -21,22 +21,57 @@ struct S_Block
     void addQuad(Mesh& mesh, Vector3 loc, Vector3 blockSize, const Vector3Int& direction)
     {
         //Construct::cube(mesh);
-        if (direction.y == 1)
+        if (direction.y == -1)
         {
             Vector3 p1 = loc;
             Vector3 p2 = p1 + Vector3(blockSize.x, 0, 0);
             Vector3 p3 = p1 + Vector3(0, 0, blockSize.z);
             Vector3 p4 = p1 + Vector3(blockSize.x, 0, blockSize.z);
+            mesh.addQuad(p4, p3, p1, p2);
+        }
+
+        if (direction.y == 1)
+        {
+            Vector3 p1 = loc + Vector3(0, blockSize.y, 0);
+            Vector3 p2 = loc + Vector3(blockSize.x, blockSize.y, 0);
+            Vector3 p3 = loc + Vector3(0, blockSize.y, blockSize.z);
+            Vector3 p4 = loc + Vector3(blockSize.x, blockSize.y, blockSize.z);
             mesh.addQuad(p2, p1, p3, p4);
         }
 
         if (direction.x == -1)
         {
             Vector3 p1 = loc;
-            Vector3 p2 = p1 + Vector3(blockSize.x, 0, 0);
-            Vector3 p3 = p1 + Vector3(0, blockSize.z, 0);
-            Vector3 p4 = p1 + Vector3(blockSize.x, blockSize.z, 0);
+            Vector3 p2 = loc + Vector3(0, blockSize.y, 0);
+            Vector3 p3 = loc + Vector3(0, 0, blockSize.z);
+            Vector3 p4 = loc + Vector3(0, blockSize.y, blockSize.z);
             mesh.addQuad(p2, p1, p3, p4);
+        }
+
+        if (direction.x == 1)
+        {
+            Vector3 p1 = loc + Vector3(blockSize.x, 0, 0);
+            Vector3 p2 = loc + Vector3(blockSize.x, blockSize.y, 0);
+            Vector3 p3 = loc + Vector3(blockSize.x, 0, blockSize.z);
+            Vector3 p4 = loc + Vector3(blockSize.x, blockSize.y, blockSize.z);
+            mesh.addQuad(p4, p3, p1, p2);
+        }
+
+        if (direction.z == -1)
+        {
+            Vector3 p1 = loc;
+            Vector3 p2 = loc + Vector3(blockSize.x, 0, 0);
+            Vector3 p3 = loc + Vector3(0, blockSize.y, 0);
+            Vector3 p4 = loc + Vector3(blockSize.x, blockSize.y, 0);
+            mesh.addQuad(p2, p1, p3, p4);
+        }
+        if (direction.z == 1)
+        {
+            Vector3 p1 = loc + Vector3(0, 0, blockSize.z);
+            Vector3 p2 = loc + Vector3(blockSize.x, 0, blockSize.z);
+            Vector3 p3 = loc + Vector3(0, blockSize.y, blockSize.z);
+            Vector3 p4 = loc + Vector3(blockSize.x, blockSize.y, blockSize.z);
+            mesh.addQuad(p4, p3, p1, p2);
         }
     }
 

@@ -2,6 +2,7 @@
 #define _MESH_H_
 
 #include <functional>
+
 #include "macros.h"
 #include "transform.h"
 
@@ -44,7 +45,7 @@ private:
 public:
     bool bDraw = true;
 	std::vector<Vector3> vertices;
-	std::vector<unsigned int> triangles;
+	std::vector<unsigned int> triangles; //indices
     E_VerticesType typeOfVerticies = E_VerticesType::E_TRIANGLES;
 
     //GLenum drawMode = GL_TRIANGLE_FAN;
@@ -109,12 +110,15 @@ public:
 
     void color(float x, float y, float z)
     {
+            glColor3f((z + x)/40.f, (z + x)/40.f, (z + x)/40.f);
         if (bDraw)
         {
-            x=sin(x*PI) + 1;
-            y=sin(y*PI) + 1;
-            z=sin(z*PI) + 1;
-            glColor3f(x/2, y/2, z/2);
+            // x=sin(x*PI + 14) + 1;
+            // y=sin(y*PI + 3) + 1;
+            // z=sin(z*PI + 60) + 1;
+            // glColor3f(x/2, y/2, z/2);
+
+
         }
     }
 
@@ -211,58 +215,79 @@ public:
         }
     }
 
-    void draw_quadVersion()
-    {
-       if (bShowEdges)
-            glBegin(GL_LINE_LOOP);
-        else 
-            glBegin(GL_TRIANGLES);
+    void draw_quadVersion();
+    // {
+    //         GLuint texture;
+    //         glEnable(GL_TEXTURE_2D);
+    //         glGenTextures(1, &texture);
+    //         //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    //         glBindTexture(GL_TEXTURE_2D, texture);
+    //         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    //             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    //         float pixels[] = {
+    //             0.3f, 0.0f, 0.0f,   1.0f, 1.0f, 1.0f, 0.3f, 0.0f, 0.0f,
+    //             1.0f, 1.0f, 1.0f,   0.0f, 0.3f, 0.0f, 0.3f, 0.0f, 0.0f,
+    //             1.0f, 1.0f, 1.0f,   0.0f, 0.3f, 0.0f, 0.0f, 0.0f, 3.0f,
+    //         };
+    //         int w;
+    //         int h;
+    //         int comp;
+    //         std::string filename = "dirt.jpg";
+    //         unsigned char* image = stbi_load(filename.c_str(), &w, &h, &comp, STBI_rgb);
+
+    //         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 3, 3, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+
+    //    if (bShowEdges)
+    //         glBegin(GL_LINE_LOOP);
+    //     else 
+    //         glBegin(GL_TRIANGLES);
             
-        Vector3 p1 = {0.f, 0.f, 0.f};
-        //since we know that triangles.size() is a multiple of 4 (it contains quads),
-        //we do a loop unrolling for optimization
-        for (unsigned int i = 0; i < triangles.size(); i+=4)
-        {
-            // b --- c
-            // |   / |
-            // | /   |
-            // a --- d
+    //     Vector3 p1 = {0.f, 0.f, 0.f};
+    //     //since we know that triangles.size() is a multiple of 4 (it contains quads),
+    //     //we do a loop unrolling for optimization
+    //     for (unsigned int i = 0; i < triangles.size(); i+=4)
+    //     {
+    //         // b --- c
+    //         // |   / |
+    //         // | /   |
+    //         // a --- d
 
-            // a - b - c
-            p1 = vertices.at(triangles.at(i));
-            color(p1.x, p1.y, p1.z);
-            //glTexCoord2d(0, 0);
-            glVertex3d(p1.x, p1.y, p1.z);
+    //         // a - b - c
+    //         p1 = vertices.at(triangles.at(i));
+    //         //color(p1.x, p1.y, p1.z);
+    //         glTexCoord2d(0, 0);
+    //         glVertex3d(p1.x, p1.y, p1.z);
             
-            p1 = vertices.at(triangles.at(i+1));
-            color(p1.x, p1.y, p1.z);
-            //glTexCoord2d(0, 1);
-            glVertex3d(p1.x, p1.y, p1.z);
+    //         p1 = vertices.at(triangles.at(i+1));
+    //         //color(p1.x, p1.y, p1.z);
+    //         glTexCoord2d(0, 1);
+    //         glVertex3d(p1.x, p1.y, p1.z);
 
-            p1 = vertices.at(triangles.at(i+2));
-            color(p1.x, p1.y, p1.z);
-            //glTexCoord2d(1, 0);
-            glVertex3d(p1.x, p1.y, p1.z);
+    //         p1 = vertices.at(triangles.at(i+2));
+    //         //color(p1.x, p1.y, p1.z);
+    //         glTexCoord2d(1, 0);
+    //         glVertex3d(p1.x, p1.y, p1.z);
 
-            // a - c - d
+    //         // a - c - d
 
-            p1 = vertices.at(triangles.at(i));
-            color(p1.x, p1.y, p1.z);
-            //glTexCoord2d(0, 0);
-            glVertex3d(p1.x, p1.y, p1.z);
+    //         p1 = vertices.at(triangles.at(i));
+    //         //color(p1.x, p1.y, p1.z);
+    //         glTexCoord2d(0, 0);
+    //         glVertex3d(p1.x, p1.y, p1.z);
 
-            p1 = vertices.at(triangles.at(i+2));
-            color(p1.x, p1.y, p1.z);
-            //glTexCoord2d(1, 0);
-            glVertex3d(p1.x, p1.y, p1.z);
+    //         p1 = vertices.at(triangles.at(i+2));
+    //         //color(p1.x, p1.y, p1.z);
+    //         glTexCoord2d(1, 0);
+    //         glVertex3d(p1.x, p1.y, p1.z);
 
-            p1 = vertices.at(triangles.at(i+3));
-            color(0, 0, 0);
-            //glTexCoord2d(1, 0);
-            glVertex3d(p1.x, p1.y, p1.z);
-        }
-        glEnd();
-    }
+    //         p1 = vertices.at(triangles.at(i+3));
+    //         //color(0, 0, 0);
+    //         glTexCoord2d(1, 0);
+    //         glVertex3d(p1.x, p1.y, p1.z);
+    //     }
+    //     glEnd();
+    // }
 
     void draw()
     {
