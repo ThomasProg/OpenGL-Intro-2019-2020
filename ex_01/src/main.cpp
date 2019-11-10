@@ -10,46 +10,42 @@
 
 constexpr int SCREEN_WIDTH  = 1280;
 constexpr int SCREEN_HEIGHT =  700;
-constexpr float SPEED = 0.05f;
-constexpr float SHAPE_SIZE = 200;
+constexpr float SPEED = 0.01f;
+constexpr float SHAPE_SIZE = 600;
 
-void drawCircle(unsigned int nbPoints, GLenum drawMode = GL_TRIANGLE_FAN, float x = 0, float y = 0)
+void drawCircle(unsigned int nbPoints, bool bFillShape = true)
 {
-    glBegin(drawMode);
+    if (bFillShape)
+        glBegin(GL_TRIANGLE_FAN);
+    else
+        glBegin(GL_LINE_LOOP);
     const float rotPerPoint = 2*PI/nbPoints;
     for (unsigned int i = 0; i < nbPoints; i++)
     {
-        glVertex3f(SHAPE_SIZE * (cos(rotPerPoint * i)) / SCREEN_WIDTH + x, 
-                   SHAPE_SIZE * (sin(rotPerPoint * i)) / SCREEN_HEIGHT + y, 
+        glVertex3f(cos(rotPerPoint * i), 
+                   sin(rotPerPoint * i), 
                    0.f);
     }
     glEnd();
 }
 
-void moveShape(GLFWwindow* window, float& locX, float& locY)
+void moveShape(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_RIGHT))
-    {
-        locX += SPEED;
-    }
+        glTranslatef(SPEED, 0, 0);
     if (glfwGetKey(window, GLFW_KEY_LEFT))
-    {
-        locX -= SPEED;
-    }
+        glTranslatef(-SPEED, 0, 0);
     if (glfwGetKey(window, GLFW_KEY_UP))
-    {
-        locY += SPEED;
-    }
+        glTranslatef(0, SPEED, 0);
     if (glfwGetKey(window, GLFW_KEY_DOWN))
-    {
-        locY -= SPEED;
-    }
+        glTranslatef(0, - SPEED, 0);
 }
 
 void updateColor(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT))
     {
+        //set background color
         if (glfwGetKey(window, GLFW_KEY_R))
             glClearColor(0xFF, 0x00, 0x00, 0xFF);
 
@@ -57,12 +53,11 @@ void updateColor(GLFWwindow* window)
             glClearColor(0x00, 0xFF, 0x00, 0xFF);
 
         if (glfwGetKey(window, GLFW_KEY_B))
-        {
             glClearColor(0x00, 0x00, 0xFF, 0xFF);
-        }
     }
     else
     {
+        //set shape color
         if (glfwGetKey(window, GLFW_KEY_R))
             glColor3f(0xFF, 0x00, 0x00);
 
@@ -74,13 +69,13 @@ void updateColor(GLFWwindow* window)
     }
 }
 
-void drawShapes(GLFWwindow* window, GLenum drawMode = GL_TRIANGLE_FAN, float locX = 0, float locY = 0)
+void drawShapes(GLFWwindow* window, bool bFillShape)//GLenum drawMode = GL_TRIANGLE_FAN)
 {
     if (glfwGetKey(window, GLFW_KEY_1))
     {
         glBegin(GL_POINTS);
     
-        glVertex3f(locX, locY, 0.0f);
+        glVertex3f(0.f, 0.f, 0.f);
 
         glEnd();
     }
@@ -88,64 +83,39 @@ void drawShapes(GLFWwindow* window, GLenum drawMode = GL_TRIANGLE_FAN, float loc
     if (glfwGetKey(window, GLFW_KEY_2))
     {
         glBegin(GL_LINES);
-    
-        // glVertex3f(locX + 0 / SCREEN_WIDTH, locY + 0 / SCREEN_HEIGHT, 0.0f);
-        // glVertex3f(locX + 0 / SCREEN_WIDTH, locY + 100/ SCREEN_HEIGHT, 0.0f);
 
-        glVertex3f(locX, locY, 0.0f);
-        glVertex3f(locX, 100 + locY, 0.0f);
+        glVertex3f(0.f, 0.f, 0.0f);
+        glVertex3f(0.25f, 0.25f, 0.f);
 
         glEnd();
     }
 
     if (glfwGetKey(window, GLFW_KEY_3))
-    {
-        glBegin(GL_TRIANGLES);
-    
-        drawCircle(3, drawMode, locX, locY);
-
-        glEnd();
-    }
+        drawCircle(3, bFillShape);
 
     if (glfwGetKey(window, GLFW_KEY_4))
-    {
-        drawCircle(4, drawMode, locX, locY);
-    }
+        drawCircle(4, bFillShape);
 
     if (glfwGetKey(window, GLFW_KEY_5))
-    {
-        drawCircle(5, drawMode, locX, locY);
-    }
+        drawCircle(5, bFillShape);
 
     if (glfwGetKey(window, GLFW_KEY_6))
-    {
-        drawCircle(6, drawMode, locX, locY);
-    }
+        drawCircle(6, bFillShape);
 
     if (glfwGetKey(window, GLFW_KEY_7))
-    {
-        drawCircle(7, drawMode, locX, locY);
-    }
+        drawCircle(7, bFillShape);
 
     if (glfwGetKey(window, GLFW_KEY_8))
-    {
-        drawCircle(8, drawMode, locX, locY);
-    }
+        drawCircle(8, bFillShape);
 
     if (glfwGetKey(window, GLFW_KEY_9))
-    {
-        drawCircle(9, drawMode, locX, locY);
-    }
+        drawCircle(9, bFillShape);
 
     if (glfwGetKey(window, GLFW_KEY_0))
-    {
-        drawCircle(200, drawMode, locX, locY);
-    }
+        drawCircle(200, bFillShape);
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE))
-    {
         glfwSetWindowShouldClose(window, GL_TRUE);
-    }
 }
 
 int main()
@@ -158,8 +128,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
-
-    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "hello world", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Opengl Shapes 2D", NULL, NULL);
 
     glfwMakeContextCurrent(window);
 
@@ -171,17 +140,19 @@ int main()
 
     bool bFillShape = true;
     bool bMinusInput = false;
-    float locX = 0, locY = 0;
+    glScalef(SHAPE_SIZE / float(SCREEN_WIDTH), 
+             SHAPE_SIZE / float(SCREEN_HEIGHT), 
+             SHAPE_SIZE / float(SCREEN_WIDTH));
 
     while (!glfwWindowShouldClose(window))
     {
         glfwPollEvents();
 
         glClear(GL_COLOR_BUFFER_BIT);
-        glClearColor(0.5f, 0.5f, 0.5f, 1.f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.f);
         glColor3f(0xFF, 0xFF, 0xFF);
 
-        moveShape(window, locX, locY);
+        moveShape(window);
 
         updateColor(window);
 
@@ -193,9 +164,7 @@ int main()
         else if (!glfwGetKey(window, GLFW_KEY_MINUS))
             bMinusInput = false;
 
-        GLenum drawMode = bFillShape ? GL_LINE_LOOP : GL_TRIANGLE_FAN;
-
-        drawShapes(window, drawMode, locX, locY);
+        drawShapes(window, bFillShape);
 
         glfwSwapBuffers(window);
     }
