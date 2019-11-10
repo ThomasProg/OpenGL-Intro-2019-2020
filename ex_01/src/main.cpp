@@ -138,8 +138,11 @@ int main()
         return -1;
     }
 
+    //doOnce booleans
     bool bFillShape = true;
     bool bMinusInput = false;
+
+    //relative to Window
     glScalef(SHAPE_SIZE / float(SCREEN_WIDTH), 
              SHAPE_SIZE / float(SCREEN_HEIGHT), 
              SHAPE_SIZE / float(SCREEN_WIDTH));
@@ -156,6 +159,7 @@ int main()
 
         updateColor(window);
 
+        //do once per click struct
         if (glfwGetKey(window, GLFW_KEY_MINUS) && glfwGetKey(window, GLFW_KEY_MINUS) != bMinusInput)
         {
             bFillShape = !bFillShape; 
