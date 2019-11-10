@@ -3,17 +3,19 @@
 
 #include "macros.h"
 
-void drawCircle(unsigned int nbPoints, GLenum drawMode = GL_TRIANGLE_FAN, float x = 0, float y = 0)
+void drawCircle(unsigned int nbPoints, bool bFillShape = true)
 {
-    glBegin(drawMode);
+    if (bFillShape)
+        glBegin(GL_TRIANGLE_FAN);
+    else
+        glBegin(GL_LINE_LOOP);
     const float rotPerPoint = 2*PI/nbPoints;
     for (unsigned int i = 0; i < nbPoints; i++)
     {
-        glVertex3f(SHAPE_SIZE * (cos(rotPerPoint * i)) / SCREEN_WIDTH + x, 
-                   SHAPE_SIZE * (sin(rotPerPoint * i)) / SCREEN_HEIGHT + y, 
+        glVertex3f(cos(rotPerPoint * i), 
+                   sin(rotPerPoint * i), 
                    0.f);
     }
     glEnd();
 }
-
 #endif

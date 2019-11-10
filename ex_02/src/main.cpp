@@ -128,15 +128,12 @@ void drawShapes(GLFWwindow* window, GLenum drawMode = GL_TRIANGLE_FAN)
 
     if (glfwGetKey(window, GLFW_KEY_0))
     {
-        //sphere.bDraw = true;
         UVSphere(100, 100, mesh);
         mesh.draw();
     }
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE))
-    {
         glfwSetWindowShouldClose(window, GL_TRUE);
-    }
 }
 
 int main()
