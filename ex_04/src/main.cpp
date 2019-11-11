@@ -281,8 +281,6 @@ int main()
                 path.bIsOpen = true;
         };
 
-        drawRef();
-
         if (path.bIsOpen)
         {
             glPushMatrix();
