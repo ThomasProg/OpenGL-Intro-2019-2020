@@ -24,6 +24,7 @@ void drawRef()
 
     glEnd();
 
+    //x cone
     {
         glPushMatrix();
         glTranslatef(1.8f, 0.f, 0.f);
@@ -36,6 +37,7 @@ void drawRef()
         glPopMatrix();
     }
 
+    //y cone
     {
         glPushMatrix();
         glTranslatef(0.f, 1.8f, 0.f);
@@ -48,6 +50,7 @@ void drawRef()
         glPopMatrix();
     }
 
+    //z cone
     {
         glPushMatrix();
         glTranslatef(0.f, 0.f, 1.8f);

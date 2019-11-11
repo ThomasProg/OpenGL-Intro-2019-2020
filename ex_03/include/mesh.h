@@ -19,7 +19,8 @@ struct Mesh
 	std::vector<Vector3> vertices;
 	std::vector<unsigned int> triangles;
 
-    GLenum drawMode = GL_TRIANGLE_FAN;
+    //GLenum drawMode = GL_TRIANGLE_FAN;
+    bool showEdges = false;
 
 	void addTriangle(unsigned int a, unsigned int b, unsigned int c)
 	{
@@ -52,7 +53,11 @@ struct Mesh
 
     void draw()
     {
-        glBegin(drawMode);
+        if (showEdges)
+            glBegin(GL_TRIANGLE_FAN);
+        else
+            glBegin(GL_LINE_LOOP);
+
         Vector3 p1 = {0.f, 0.f, 0.f};
         for (unsigned int i = 0; i < triangles.size(); i+=3)
         {

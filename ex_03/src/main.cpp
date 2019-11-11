@@ -9,7 +9,7 @@
 #include "doOnce.h"
 
 constexpr float rotationSpeed = 0.5f;
-constexpr float scaleSpeed = 1.f / 10.f;
+constexpr float scaleSpeed = 1.f / 50.f;
 
 struct S_Inputs
 {
@@ -24,26 +24,19 @@ struct S_Inputs
 
 void moveShape(GLFWwindow* window, S_Inputs& inputs)
 {
+    //translate
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT))
     {
         if (glfwGetKey(window, GLFW_KEY_RIGHT))
-        {
             glTranslated(1/100.0, 0, 0.0);
-        }
         if (glfwGetKey(window, GLFW_KEY_LEFT))
-        {
             glTranslated(-1.0/100, 0, 0.0);
-        }
         if (glfwGetKey(window, GLFW_KEY_UP))
-        {
             glTranslated(0.0, 0, 1/100);
-        }
         if (glfwGetKey(window, GLFW_KEY_DOWN))
-        {
             glTranslated(0.0, 0, -1/100);
-        }
     }
-
+    //rotate
     inputs.x.input(glfwGetKey(window, GLFW_KEY_X));
     if (inputs.x.isOn)
         glRotated(rotationSpeed, 1.f, 0.f, 0.f);
@@ -56,7 +49,7 @@ void moveShape(GLFWwindow* window, S_Inputs& inputs)
     if (inputs.z.isOn)
         glRotated(rotationSpeed, 0.f, 0.f, 1.f);
     
-
+    //scale
     if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) || glfwGetKey(window, GLFW_KEY_MINUS))
         glScalef(1.f - scaleSpeed, 1.f - scaleSpeed, 1.f - scaleSpeed);
     if (glfwGetKey(window, GLFW_KEY_KP_ADD)  || glfwGetKey(window, GLFW_KEY_EQUAL))
@@ -67,6 +60,7 @@ void updateColor(GLFWwindow* window)
 {
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT))
     {
+        //set background color 
         if (glfwGetKey(window, GLFW_KEY_R))
             glClearColor(0xFF, 0x00, 0x00, 0xFF);
 
@@ -74,12 +68,11 @@ void updateColor(GLFWwindow* window)
             glClearColor(0x00, 0xFF, 0x00, 0xFF);
 
         if (glfwGetKey(window, GLFW_KEY_B))
-        {
             glClearColor(0x00, 0x00, 0xFF, 0xFF);
-        }
     }
     else
     {
+        //set shape color
         if (glfwGetKey(window, GLFW_KEY_R))
             glColor3f(0xFF, 0x00, 0x00);
 
@@ -91,16 +84,14 @@ void updateColor(GLFWwindow* window)
     }
 }
 
-void drawShapes(GLFWwindow* window, GLenum drawMode = GL_TRIANGLE_FAN, bool showEdges = false)
+void drawShapes(GLFWwindow* window, bool showEdges = false)
 {
-    //drawCube();
-
     Mesh mesh;
-    mesh.drawMode = drawMode;
+    // mesh.drawMode = drawMode;
+    mesh.showEdges = showEdges;
 
     if (glfwGetKey(window, GLFW_KEY_1))
     {
-        //sphere.bDraw = true;
         UVSphere(100, 100, mesh);
         mesh.draw();
     }
@@ -146,9 +137,7 @@ void drawShapes(GLFWwindow* window, GLenum drawMode = GL_TRIANGLE_FAN, bool show
     }
 
     if (glfwGetKey(window, GLFW_KEY_ESCAPE))
-    {
         glfwSetWindowShouldClose(window, GL_TRUE);
-    }
 }
 
 int main()
@@ -160,7 +149,6 @@ int main()
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-
 
     GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Geometry", NULL, NULL);
 
@@ -174,6 +162,7 @@ int main()
 
     glEnable(GL_DEPTH_TEST);
 
+    //relative to window
     glScalef(600.f / float(SCREEN_HEIGHT), 600.f / float(SCREEN_WIDTH), 600.f / float(SCREEN_HEIGHT));
 
     S_Inputs inputs;
@@ -183,18 +172,15 @@ int main()
         glfwPollEvents();
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //glClearColor(0.5f, 0.5f, 0.5f, 1.f);
         glColor3f(0xFF, 0xFF, 0xFF);
 
-
+        drawShapes(window, inputs.showEdges.isOn);
 
         moveShape(window, inputs);
 
         updateColor(window);
 
         inputs.showEdges.input(glfwGetKey(window, GLFW_KEY_M));
-        //GLenum drawMode = inputs.showEdges.isOn ? GL_LINE_LOOP : GL_TRIANGLE_FAN;
-
 
         glfwSwapBuffers(window);
     }

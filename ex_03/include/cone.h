@@ -55,25 +55,14 @@ void drawConeCut(unsigned int nbPoints, GLenum drawMode = GL_TRIANGLE_FAN, float
 
 void drawCone(unsigned int nbPoints, Mesh& mesh) 
 {
-    if (mesh.drawMode == GL_TRIANGLE_FAN)
+    if (mesh.showEdges)
         glBegin(GL_TRIANGLE_FAN);
     else
         glBegin(GL_LINE_LOOP);
 
-    GLenum& drawMode = mesh.drawMode;
-    // double& x = mesh.relativeLoc.x;
-    // double& y = mesh.relativeLoc.y;
-    // double& z = mesh.relativeLoc.z;
-    // double& scaleX = mesh.relativeScale.x;
-    // double& scaleY = mesh.relativeScale.y;
-    // double& scaleZ = mesh.relativeScale.z;
-
     nbPoints--;
 
     float px[nbPoints], py[nbPoints];
-
-    //glBegin(drawMode);
-    //glBegin(GL_TRIANGLE_FAN);
 
     const float rotPerPoint = 2*PI/nbPoints;
     for (unsigned int i = 0; i < nbPoints; i++)
@@ -81,7 +70,6 @@ void drawCone(unsigned int nbPoints, Mesh& mesh)
         px[i] = cos(rotPerPoint * i);
         py[i] = sin(rotPerPoint * i);
 
-        //mesh.color(px[i], py[i], scaleZ * z);
         glVertex3f(px[i], 
                    py[i], 
                    0);
@@ -89,9 +77,7 @@ void drawCone(unsigned int nbPoints, Mesh& mesh)
 
     glEnd();
 
-    //glColor3f(0xFF, 0x00, 0x00);
-
-    if (drawMode == GL_TRIANGLE_FAN)
+    if (mesh.showEdges)
         glBegin(GL_TRIANGLE_STRIP);
     else
         glBegin(GL_LINES);
@@ -107,7 +93,6 @@ void drawCone(unsigned int nbPoints, Mesh& mesh)
         glVertex3f(0, 
                    0, 
                    h);
-
     }
 
     glVertex3f(px[0], 
@@ -120,12 +105,6 @@ void drawCone(unsigned int nbPoints, Mesh& mesh)
     glEnd();
 }
 
-void drawCone2(unsigned int nbPoints, GLenum drawMode = GL_TRIANGLE_FAN, float x = 0, float y = 0, float z = 0)
-{
-    // Mesh mesh;
-    // mesh.drawMode = drawMode;
-    // drawConeCut(nbPoints, drawMode, x, y, z);
-    // drawCone(nbPoints, drawMode, x, y, z + 2 * h, 0.5, 0.5, 0.5);
-}
+
 
 #endif
