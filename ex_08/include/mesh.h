@@ -1,7 +1,7 @@
 #ifndef _MESH_H_
 #define _MESH_H_
 
-constexpr float CUBE_SIZE = 10.f;
+constexpr float CUBE_SIZE = 0.1f;
 constexpr float CUBE_HALF_SIZE = CUBE_SIZE / 2.f;
 
 struct vector3D
@@ -38,9 +38,18 @@ struct S_Cube
         return cutCube;
     }
 
+    void drawFace(vector3D p1, vector3D p2) const
+    {
+        glColor3f(1.f, 0.f, 0.f);
+        glVertex3f(p1.x, p1.y, p1.z);
+        glVertex3f(p2.x, p1.y, p1.z);
+        glVertex3f(p2.x, p2.y, p1.z);
+        glVertex3f(p1.x, p2.y, p1.x);
+    }
+
     void draw() const
     {
-        
+        drawFace(minCoords, maxCoords);
     }
 };
 
@@ -81,10 +90,12 @@ public:
 
     void draw()
     {
+        glBegin(GL_QUADS);
         for (const S_Cube& cube : cubes)
         {
             cube.draw();
         }
+        glEnd();
     }
 };
 

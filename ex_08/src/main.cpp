@@ -4,6 +4,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <GL/gl.h>
+#include <GL/glu.h>
 
 #include <algorithm>
 #include <queue>
@@ -39,9 +40,12 @@ int main (int ArgCount, char **Args)
 
   bool bRunning = true;
   int32_t FullScreen = 0;
+  CubeTower tower;
 
   while (bRunning)
   {
+    //gluLookAt(1, 1, 1, 0, 0, 0, 1, 1, 1);
+    tower.draw();
     SDL_Event Event;
     while (SDL_PollEvent(&Event))
     {
