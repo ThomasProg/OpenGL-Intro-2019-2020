@@ -67,34 +67,6 @@ void moveShape(GLFWwindow* window, S_Inputs& inputs, Mesh& mesh)
     }
 }
 
-// void updateColor(GLFWwindow* window)
-// {
-//     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT))
-//     {
-//         if (glfwGetKey(window, GLFW_KEY_R))
-//             glClearColor(0xFF, 0x00, 0x00, 0xFF);
-
-//         if (glfwGetKey(window, GLFW_KEY_G))
-//             glClearColor(0x00, 0xFF, 0x00, 0xFF);
-
-//         if (glfwGetKey(window, GLFW_KEY_B))
-//         {
-//             glClearColor(0x00, 0x00, 0xFF, 0xFF);
-//         }
-//     }
-//     else
-//     {
-//         if (glfwGetKey(window, GLFW_KEY_R))
-//             glColor3f(0xFF, 0x00, 0x00);
-
-//         if (glfwGetKey(window, GLFW_KEY_G))
-//             glColor3f(0x00, 0xFF, 0x00);
-
-//         if (glfwGetKey(window, GLFW_KEY_B))
-//             glColor3f(0x00, 0x00, 0xFF);
-//     }
-// }
-
 void drawShapes(GLFWwindow* window, Mesh& mesh, bool showEdges = false)
 {
     //drawCube();
