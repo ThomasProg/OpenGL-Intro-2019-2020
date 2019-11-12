@@ -6,7 +6,7 @@ CFLAGS=$(CXXFLAGS)
 CC=gcc
 CXX=g++
 
-LDLIBS=-Llib -lSDL2 -lSDL2main -lGL -lGLU -ldl
+LDLIBS=-Llib -lglfw -lSDL2 -lSDL2main -lGL -lGLU -ldl
 OBJS=src/glad.o src/main.o #src/primitives.o
 DEPS=$(OBJS:.o=.d)
 
