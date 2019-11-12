@@ -45,8 +45,6 @@ public:
             relativeLoc.y += NB_ELEMENTS;
         if (relativeLoc.z < 0)
             relativeLoc.z += NB_ELEMENTS;
-        std::cout << " x : " << blockWorldLoc.x << " y : " << blockWorldLoc.y << " z : " << blockWorldLoc.z << std::endl;
-        std::cout << "Chunk / x : " << coordinates.x << " y : " << coordinates.y << " z : " << coordinates.z << std::endl;
 
         E_BlockTypes block = blocks[getCoords3D(relativeLoc.x, relativeLoc.y, relativeLoc.z, 
                                     NB_ELEMENTS, NB_ELEMENTS)].blockID;
@@ -141,8 +139,9 @@ public:
             }
         }
 
-        if (totX == 5 && totZ == 5)
-            return E_BlockTypes::E_AIR;
+        //uncomment to create a path to the surface
+        // if (totX == 5 && totZ == 5)
+        //     return E_BlockTypes::E_AIR;
 
         if (isUnderground)
         {
@@ -254,8 +253,6 @@ public:
         {
             if (chunk.coordinates == chunkCoordinates)
             {
-                std::cout << "loc : " << chunk.coordinates.x << std::endl;
-                std::cout << "ChunkLoc : " << chunkCoordinates.x << std::endl;
                 return chunk.isBlockColliding(blockLoc);
             }
         }
@@ -317,7 +314,6 @@ public:
 
         if (lastPlayerLoc != playerCoordinates)
         {
-            //std::cout << playerCoordinates.x << " / " << playerCoordinates.y << " / " << playerCoordinates.z << std::endl;
             destroyChunks(playerCoordinates);
 
             createChunks(playerCoordinates);

@@ -235,14 +235,10 @@ int main()
     //unsigned int currentIntersectIndex = 0;
     //float shapeLocRatio = 0.f;
 
-    Mesh mesh;
-    Mesh playerMesh;
     Camera mainCamera;
     Maze maze;
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-    //glOrtho(-5, 5, -5, 5, -50, 50);
-    //glLoadIdentity();
 
     double previousTime = glfwGetTime();
     glEnable(GL_FOG);
@@ -255,10 +251,9 @@ int main()
 
         double time =  glfwGetTime();
         mainCamera.deltaTime = time - previousTime;
-        std::cout << "FPS : " << 1/(time - previousTime) << std::endl;
+        //FPS
+        //std::cout << "FPS : " << 1/(time - previousTime) << std::endl;
         previousTime = time;
-
-        //std::cout << "Player Loc : " << mainCamera.transform.location.x << std::endl;
 
         //camera
         {
@@ -309,107 +304,7 @@ int main()
         glLoadIdentity();
         mainCamera.useTransform();
 
-        glPushMatrix();
-        playerMesh.setMesh(E_MeshType::E_CUBE);
-        // glLoadIdentity();
-        // glTranslatef(0,0,1);
-        // playerMesh.useTransform();
-        playerMesh.draw();
-        glPopMatrix();
-        //mesh.transform.location.x -= 0.003;
-
         maze.render(mainCamera.transform.location);
-
-        glPushMatrix();
-        //mesh.setMesh(E_MeshType::E_CUBE);
-        mesh.setMesh(E_MeshType::E_MAZE);
-        glTranslatef(0, -1.9, 0);
-        drawRef();
-        glScalef(5,0.5,5);
-        mesh.useTransform();
-        mesh.draw();
-        glPopMatrix();
-
-        // inputs.showEdges.input(glfwGetKey(window, GLFW_KEY_M));
-        // //mesh.drawMode = inputs.showEdges.isOn ? GL_LINE_LOOP : GL_TRIANGLE_FAN;
-        // mesh.bShowEdges = inputs.showEdges.isOn;
-
-        // inputs.leftMouseClick.input(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT));
-
-        // inputs.rightMouseClick.input(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT));
-
-        // inputs.leftMouseClick.onSwitch = [&]()
-        // {
-        //         path.addPoint(window);
-        // };
-        // inputs.rightMouseClick.onSwitch = [&]()
-        // {
-        //         path.addPoint(window);
-        //         path.bIsOpen = true;
-        // };
-
-        //drawRef();
-
-        // if (path.bIsOpen)
-        // {
-        //     glPushMatrix();
-        //     glScalef(float(SCREEN_HEIGHT) / 600.f, float(SCREEN_WIDTH) / 600.f, float(SCREEN_HEIGHT) / 600.f);
-
-        //     glBegin(GL_LINE_LOOP);
-        //     for (unsigned int i = 0; i < path.points.size(); i++)
-        //     {
-        //         float ratio = float(i) / float(path.points.size());
-        //         {
-        //             glColor4f(1.f - ratio, 0.f, ratio, ratio);
-        //             float x = path.points[i].x;
-        //             float y = path.points[i].y;
-        //             glVertex3f(x, y, 0);
-        //         }
-        //     }
-        //     glEnd();
-        //     glPopMatrix();
-        // }
-
-        // {
-        //     if (path.points.size() != 0 && path.bIsOpen)
-        //     {
-        //         glPushMatrix();
-
-        //         vec2 translation(0,0);
-        //         translation.x = shapesLoc.x - path.points[(currentIntersectIndex + 1) % path.points.size()].x;
-        //         translation.y = shapesLoc.y - path.points[(currentIntersectIndex + 1) % path.points.size()].y;
-
-        //         unsigned int i = currentIntersectIndex;
-        //         while (vec2(translation.x, translation.y).length() < 0.03 && (currentIntersectIndex + 1) % path.points.size() != i)
-        //         {
-        //             currentIntersectIndex++;
-        //             currentIntersectIndex%= path.points.size();
-        //             translation.x = shapesLoc.x - path.points[(currentIntersectIndex + 1) % path.points.size()].x;
-        //             translation.y = shapesLoc.y - path.points[(currentIntersectIndex + 1) % path.points.size()].y;
-        //         }
-        //         translation = translation.unit();
-        //         translation.x *= -0.01;
-        //         translation.y *= -0.01;
-        //         glTranslatef(shapesLoc.x + translation.x, shapesLoc.y + translation.y, 0);
-        //         shapesLoc.x += translation.x;
-        //         shapesLoc.y += translation.y;
-
-        //         glScalef(0.1, 0.1, 0.1);
-        //         moveShape(window, inputs, mesh);
-        //         mesh.useTransform();
-        //         // glTranslatef(mesh.location.x, mesh.location.y, mesh.location.z);
-        //         // glScalef(mesh.scale.x, mesh.scale.y, mesh.scale.z);
-        //         // glRotated(mesh.rotation.x, 1, 0, 0);
-        //         // glRotated(mesh.rotation.y, 0, 1, 0);
-        //         // glRotated(mesh.rotation.z, 0, 0, 1);
-
-        //         drawShapes(window, mesh, inputs.showEdges.isOn);
-        //         if (glfwGetKey(window, GLFW_KEY_3))
-        //             drawRef();
-
-        //         glPopMatrix();
-        //     }
-        // }
 
         glfwSwapBuffers(window);
     }
