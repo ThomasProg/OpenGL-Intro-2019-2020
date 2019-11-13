@@ -1,23 +1,26 @@
 #ifndef _TRANSFORM_H_
 #define _TRANSFORM_H_
 
-struct Vector3
+struct vector3D
 {
-	double x, y, z;
-	Vector3(double v) : x(v), y(v), z(v) {}
-	Vector3(double ix, double iy, double iz) : x(ix), y(iy), z(iz) {}
-	Vector3 operator +(const Vector3 &other) const { return Vector3(x + other.x, y + other.y, z + other.z); }
-	Vector3 operator -(const Vector3 &other) const { return Vector3(x - other.x, y - other.y, z - other.z); }
-	Vector3 operator *(const Vector3 &other) const { return Vector3(x * other.x, y * other.y, z * other.z); }
-	Vector3 operator /(const Vector3 &other) const { return Vector3(x / other.x, y / other.y, z / other.z); }
+	float x, y, z;
+    vector3D() {}
+	vector3D(float v) : x(v), y(v), z(v) {}
+	vector3D(float ix, float iy, float iz) : x(ix), y(iy), z(iz) {}
+	vector3D operator +(const vector3D &other) const { return vector3D(x + other.x, y + other.y, z + other.z); }
+	vector3D operator -(const vector3D &other) const { return vector3D(x - other.x, y - other.y, z - other.z); }
+	vector3D operator *(const vector3D &other) const { return vector3D(x * other.x, y * other.y, z * other.z); }
+	vector3D operator /(const vector3D &other) const { return vector3D(x / other.x, y / other.y, z / other.z); }
+
+	vector3D operator /(float f) const { return vector3D(x / f, y / f, z / f); }
 };
 
 struct Vector3Int
 {
     int x, y, z;
     Vector3Int(int ix, int iy, int iz) : x(ix), y(iy), z(iz) {}
-	Vector3Int(double ix, double iy, double iz) : x(floor(ix)), y(floor(iy)), z(floor(iz)) {}
-	Vector3Int(Vector3 v) : x(floor(v.x)), y(floor(v.y)), z(floor(v.z)) {}
+	Vector3Int(float ix, float iy, float iz) : x(floor(ix)), y(floor(iy)), z(floor(iz)) {}
+	Vector3Int(vector3D v) : x(floor(v.x)), y(floor(v.y)), z(floor(v.z)) {}
 
     bool operator!=(const Vector3Int& b) const
     {
@@ -64,9 +67,9 @@ struct vec2
 
 struct S_Transform
 {
-    Vector3 location = Vector3(0);
-    Vector3 rotation = Vector3(0);
-    Vector3 scale    = Vector3(1);
+    vector3D location = vector3D(0);
+    vector3D rotation = vector3D(0);
+    vector3D scale    = vector3D(1);
 
 	//transform openGL matrix
 	void use()
