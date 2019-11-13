@@ -12,3 +12,10 @@ void Construct::maze(Mesh &mesh)
     mesh.addQuad(a, b, c, d);
 }
  
+int positiveModulo(int n, int modulo) //true mathematic version 
+{
+    n %= modulo;
+    if (n < 0)
+        n += modulo;
+    return n;
+}

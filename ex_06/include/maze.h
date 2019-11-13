@@ -10,6 +10,7 @@
 #include "block.h"
 
 //#define COORDS3D(x, y, z, sizeY, sizeZ) (z + y * sizeZ + x * sizeY * sizeZ)
+int positiveModulo(int n, int modulo);
 
 struct Mesh;
 
@@ -145,12 +146,14 @@ public:
 
         if (isUnderground)
         {
-            if (totX % 10 == 5 && totY % 10 == 5)
-                return E_BlockTypes::E_AIR;
-            else if (totZ % 10 == 5 && totY % 10 == 5)
+            // if (totX % 10 == 5 && totY % 10 == 5)
+            //     return E_BlockTypes::E_AIR;
+            if (positiveModulo(totY, 10) == 5 && (positiveModulo(totZ, 10) == 5 || positiveModulo(totX, 10) == 5))
                 return E_BlockTypes::E_AIR;
             else 
+            {
                 return E_BlockTypes::E_SIMPLE;
+            }
         }
         else 
             return E_BlockTypes::E_AIR;
@@ -302,11 +305,6 @@ public:
             }
         }
     }
-
-    // void tick()
-    // {
-
-    // }
 
     void render(const Vector3& playerLoc)
     {
