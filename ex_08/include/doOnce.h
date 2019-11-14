@@ -1,4 +1,4 @@
-#ifndef _DO_ONCE_H_
+ #ifndef _DO_ONCE_H_
 #define _DO_ONCE_H_
 
 #include <functional>

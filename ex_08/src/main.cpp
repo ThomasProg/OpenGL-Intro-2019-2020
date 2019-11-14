@@ -10,19 +10,19 @@
 #include "doOnce.h"
 #include "timeline.h"
 #include "score.h"
+#include "referential.h"
 
 constexpr float rotationSpeed = 0.5f;
 constexpr float scaleSpeed = 1.f / 10.f;
 
-// float lerp(float a, float b, float f)
-// {
-//     return a + f * (b - a);
-// }
-
-
 void input()
 {
 
+}
+
+void errorGLCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
+{
+    fprintf(stderr, "GL error: %s (code=%d)\n", message, id);
 }
 
 void Game::animations()
@@ -38,6 +38,10 @@ void Game::animations()
         else 
         {
             mainCamera.transform.rotation.y += deltaAddRot;
+            //mainCamera.down(1);
+            // mainCamera.transform.location.x -= 0.01;
+            // mainCamera.transform.location.y -= 0.01;
+            // mainCamera.transform.location.z -= 0.01;
         }
     }
     else
@@ -56,7 +60,7 @@ GLFWwindow* openGLInit()
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-
+    glfwWindowHint(GLFW_SAMPLES, 4);
     GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Geometry", NULL, NULL);
 
     glfwMakeContextCurrent(window);
@@ -66,7 +70,18 @@ GLFWwindow* openGLInit()
         glfwTerminate();
         return nullptr;
     }
+
+    glDebugMessageCallback(errorGLCallback, nullptr);
     glEnable(GL_BLEND);
+    glEnable(GL_MULTISAMPLE);  
+
+    //light
+    {
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+        glEnable(GL_COLOR_MATERIAL);     
+    }
+    
     return window;
 }
 
@@ -77,6 +92,7 @@ void setupGLForUI(int width, int height)
     glLoadIdentity();
     glOrtho(0, (GLdouble)SCREEN_WIDTH, SCREEN_HEIGHT, (GLdouble)0, -1, 10);
     glLoadIdentity();
+    glDisable(GL_DEPTH_TEST);
 
     glMatrixMode(GL_MODELVIEW);
 }
@@ -98,15 +114,9 @@ void openGLSet()
     // Set up model-view
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    // if (perspective)
-    //     glTranslatef(0.f, 0.f, translateZ);
-    // glScalef(0.6f, 0.6f, 0.6f);
-    // glRotatef(rotation, 0.f, 1.f, 0.f);
 
     // Enable/Disable capabilities
     glDisable(GL_TEXTURE_2D);
-    // if (enableDepth)
-    //     glEnable(GL_DEPTH_TEST);
 
     //fog
     GLfloat fogColor[4] = {0.110*5, 0.177*5, 0.245*5, 1.0};
@@ -122,10 +132,8 @@ void Game::fade()
 {
     //fade
     {
-        mainCamera.inputs(window);
-        if (bGameOver && glfwGetKey(window, GLFW_KEY_SPACE))
+        if (bGameOver && inputs.put.isOn)
         {
-            bGameOver = false;
             fadeReset.startTime  = currentTime;
             fadeReset.startValue = 0.f;
             fadeReset.endValue   = 1.f;
@@ -133,6 +141,11 @@ void Game::fade()
         
         if (fadeReset.startValue != fadeReset.endValue && fadeReset.startTime + 3 < currentTime)
         {
+            //camera.reset()
+            mainCamera.transform.rotation.y = 0;
+            rotAnimation.reset();
+            bGameOver = false;
+            axisIsX = true;
             fadeReset.reset();
             unsigned int nbCubes = tower.getTowerSize();
             tower.reset();
@@ -146,7 +159,6 @@ void Game::fade()
             
 
         float fadeValue = fadeReset.interp(currentTime, 3);
-        glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glColor4f(0,0,0,fadeValue);
         glBegin(GL_QUADS);
@@ -155,12 +167,12 @@ void Game::fade()
         glVertex3f(1, 1, 0);
         glVertex3f(1, -1, 0);
         glEnd();
-        glDisable(GL_BLEND);
     }
 }
 
 void Game::render2D()
 {
+    //glDisable(GL_LIGHT0);
     glPopMatrix();
     setupGLForUI(SCREEN_WIDTH, SCREEN_HEIGHT);
     fade();
@@ -169,6 +181,7 @@ void Game::render2D()
     score.draw();
 
     glPopMatrix();
+    //glEnable(GL_LIGHT0);
 }
 
 void Game::render3D()
@@ -182,29 +195,32 @@ int Game::start()
     if (window == nullptr)
         return EXIT_FAILURE;
 
-    inputs.put.onSwitch = [&]()
+    inputs.put.onSwitch = [this]()
     {
-        if (tower.addCubeOnTop(movingCube))
+        if (!bGameOver)
         {
-            movingCube.minCoords.y += CUBE_HEIGHT;
-            movingCube.maxCoords.y += CUBE_HEIGHT;  
-            mainCamera.transform.location.y += CUBE_HEIGHT;
-            axisIsX = !axisIsX;
+            if (tower.addCubeOnTop(movingCube))
+            {
+                movingCube.minCoords.y += CUBE_HEIGHT;
+                movingCube.maxCoords.y += CUBE_HEIGHT;  
+                mainCamera.transform.location.y += CUBE_HEIGHT;
+                axisIsX = !axisIsX;
 
-            //animation
-            rotAnimation.startTime = currentTime;
-            rotAnimation.startValue = mainCamera.transform.rotation.y;
-            rotAnimation.endValue += 90.f;
-        }
-        else 
-        {
-            bGameOver = true;
+                //animation
+                rotAnimation.startTime = currentTime;
+                rotAnimation.startValue = mainCamera.transform.rotation.y;
+                rotAnimation.endValue += 90.f;
+            }
+            else 
+            {
+                bGameOver = true;
 
-
-            //animation
-            rotAnimation.startTime = currentTime;
-            rotAnimation.startValue = mainCamera.transform.rotation.y;
-            rotAnimation.endValue += 360.f;
+                inputs.put.isOn = true; //to detect next space 
+                //animation
+                rotAnimation.startTime = currentTime;
+                rotAnimation.startValue = mainCamera.transform.rotation.y;
+                rotAnimation.endValue += 360.f;
+            }
         }
     };
 
@@ -213,7 +229,6 @@ int Game::start()
     double previousTime = glfwGetTime();
     glEnable(GL_FOG);
     //setupGLForDrawing(SCREEN_WIDTH, SCREEN_HEIGHT);
-    openGLSet();
 
     while (!glfwWindowShouldClose(window))
     {
@@ -226,24 +241,31 @@ int Game::start()
 
         //setupGLForDrawing(SCREEN_WIDTH, SCREEN_HEIGHT);
         openGLSet();
+        glEnable(GL_DEPTH_TEST);
         glColor3f(0xFF, 0xFF, 0xFF);
         glClearColor(0.110*5, 0.177*5, 0.245*5, 0xFF);
 
+        float loc[4] = {1,1,1,0};
+        glLightfv(GL_LIGHT0, GL_POSITION, loc);
         glPushMatrix();
         mainCamera.useTransform();
-        glColor3f(1.f, 0.f, 0.f);
+
+        // glPushMatrix();
+        // drawRef();
+        // glPopMatrix(); 
+        // glColor3f(1.f, 0.f, 0.f);
 
         tower.draw();
 
         animations();
 
         if (!bGameOver)
-        {
             movingCube.movingCubeTick(axisIsX, currentTime);
-            inputs.put.input(glfwGetKey(window, GLFW_KEY_SPACE));
-        }
 
+        inputs.put.input(glfwGetKey(window, GLFW_KEY_SPACE));
+        mainCamera.inputs(window);
         render2D();
+        glPopMatrix();
 
         glfwSwapBuffers(window);
     }

@@ -72,14 +72,14 @@ struct S_Transform
     vector3D scale    = vector3D(1);
 
 	//transform openGL matrix
-	void use()
-	{
-		glRotatef(rotation.x, 1, 0, 0);
-		glRotatef(rotation.y, 0, 1, 0);
-		glRotatef(rotation.z, 0, 0, 1);
-		glTranslatef(location.x, location.y, location.z);
-		glScalef(scale.x, scale.y, scale.z);
-	}
+	// void use()
+	// {
+	// 	glRotatef(rotation.x, 1, 0, 0);
+	// 	glRotatef(rotation.y, 0, 1, 0);
+	// 	glRotatef(rotation.z, 0, 0, 1);
+	// 	glTranslatef(location.x, location.y, location.z);
+	// 	glScalef(scale.x, scale.y, scale.z);
+	// }
 };
 
 #endif

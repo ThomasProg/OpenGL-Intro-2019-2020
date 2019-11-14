@@ -7,7 +7,7 @@ CC=gcc
 CXX=g++
 
 LDLIBS=-Llib -lglfw -lSDL2 -lSDL2main -lGL -lGLU -ldl
-OBJS=src/glad.o src/score.o src/main.o #src/primitives.o
+OBJS=src/glad.o src/score.o src/sphere.o src/main.o #src/primitives.o
 DEPS=$(OBJS:.o=.d)
 
 .PHONY: all clean

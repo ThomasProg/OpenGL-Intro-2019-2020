@@ -10,17 +10,19 @@ class Camera
 {
 public:
     S_Transform transform;
-    float speed = 5.f;
     vec2 mouseLoc;
-    float sensibility = 5.f;
     double deltaTime;
-
-    // float zRotToAdd = 0.f;
-    // float zStartRot = 0.f;
 
     Camera() 
     {
+        transform.rotation.x += 20.f;
     }
+
+    // void down(float value)
+    // {
+    //     transform.location.x += value * sin(-transform.rotation.y/180*PI) * deltaTime;
+    //     transform.location.z += value * cos(-transform.rotation.y/180*PI) * deltaTime;
+    // }
 
     void inputs(GLFWwindow* window)
     {
@@ -49,13 +51,6 @@ public:
         //     transform.location.z -= speed * cos(-transform.rotation.y/180*PI + PI/2) * deltaTime;
         // }
 
-        transform.rotation.x += (newMouseLoc.y - mouseLoc.y) * sensibility * deltaTime;//rotSpeed;   
-
-        // if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT))
-        //     transform.location.y -= speed * deltaTime;
-        // if (glfwGetKey(window, GLFW_KEY_SPACE))
-        //     transform.location.y += speed * deltaTime;
-
         if (glfwGetKey(window, GLFW_KEY_ESCAPE))
             glfwSetWindowShouldClose(window, GL_TRUE);
 
@@ -71,7 +66,7 @@ public:
 		glRotatef(transform.rotation.x, 1, 0, 0);
 		glRotatef(transform.rotation.y, 0, 1, 0);
 
-		glScalef(transform.scale.x, transform.scale.y, transform.scale.z);
+		//glScalef(transform.scale.x, transform.scale.y, transform.scale.z);
     }
 };
 
