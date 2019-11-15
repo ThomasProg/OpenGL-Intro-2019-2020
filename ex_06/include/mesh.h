@@ -106,16 +106,7 @@ public:
 
     void color(float x, float y, float z)
     {
-            glColor3f((z + x)/40.f, (z + x)/40.f, (z + x)/40.f);
-        if (bDraw)
-        {
-            // x=sin(x*PI + 14) + 1;
-            // y=sin(y*PI + 3) + 1;
-            // z=sin(z*PI + 60) + 1;
-            // glColor3f(x/2, y/2, z/2);
-
-
-        }
+        glColor3f((z + x)/40.f, (z + x)/40.f, (z + x)/40.f);
     }
 
     void useTransform()
