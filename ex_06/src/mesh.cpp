@@ -4,9 +4,6 @@
 #include "cube.h"
 #include "maze.h"
 
-// #define STB_IMAGE_IMPLEMENTATION
-// #include "stb_image.h"
-
 void Mesh::setMesh(E_MeshType type)
 {
     if (this->type != type)
@@ -57,7 +54,7 @@ void Mesh::draw_quadVersion()
         glVertex3d(p1.x, p1.y, p1.z);
         
         p1 = vertices.at(triangles.at(i+1));
-        //color(p1.x, p1.y, p1.z);
+        color(p1.x, p1.y, p1.z);
         glTexCoord2d(0, 0);
         glVertex3d(p1.x, p1.y, p1.z);
 

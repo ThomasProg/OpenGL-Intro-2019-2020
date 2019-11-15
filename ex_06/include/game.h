@@ -32,7 +32,7 @@ private:
 
     GLFWwindow* window;
 
-    Game(); //delete default constructor
+    Game() = delete; //delete default constructor
 public:
     Game(bool& isValid);
     void render();
@@ -44,7 +44,7 @@ public:
     int h;
     int comp;
     std::string filename = "media/stone.png";
-    unsigned char* image;// = stbi_load(filename.c_str(), &w, &h, &comp, STBI_rgb);
+    unsigned char* image;
     GLuint texture;
 };
 

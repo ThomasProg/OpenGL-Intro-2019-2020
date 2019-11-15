@@ -48,7 +48,6 @@ public:
 	std::vector<unsigned int> triangles; //indices
     E_VerticesType typeOfVerticies = E_VerticesType::E_TRIANGLES;
 
-    //GLenum drawMode = GL_TRIANGLE_FAN;
     bool bShowEdges = false;
 
     S_Transform transform;
@@ -90,7 +89,6 @@ public:
 		triangles.emplace_back(d);
 	}
 
-    //void (Mesh::*addQuad) (Vector3, Vector3, Vector3, Vector3) = &Mesh::addQuad_triVersion;
 	void addQuad(Vector3 a, Vector3 b, Vector3 c, Vector3 d)
 	{
         switch (typeOfVerticies)
@@ -105,8 +103,6 @@ public:
             default:;
         }
 	}
-
-
 
     void color(float x, float y, float z)
     {
@@ -129,24 +125,6 @@ public:
     
     void draw_triVersion()
     {
-        //if (type == E_MeshType::E_CUBE)
-        
-            GLuint texture;
-            glEnable(GL_TEXTURE_2D);
-            glGenTextures(1, &texture);
-            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glBindTexture(GL_TEXTURE_2D, texture);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-            float pixels[] = {
-                0.3f, 0.0f, 0.0f,   1.0f, 1.0f, 1.0f, 0.3f, 0.0f, 0.0f,
-                1.0f, 1.0f, 1.0f,   0.0f, 0.3f, 0.0f, 0.3f, 0.0f, 0.0f,
-                1.0f, 1.0f, 1.0f,   0.0f, 0.3f, 0.0f, 0.0f, 0.0f, 3.0f,
-            };
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 3, 3, 0, GL_RGB, GL_FLOAT, pixels);
-        
-
         if (bShowEdges)
             glBegin(GL_LINE_LOOP);
         else 
@@ -157,17 +135,14 @@ public:
         for (unsigned int i = 0; i < triangles.size(); i+=3)
         {
             p1 = vertices.at(triangles.at(i));
-            //color(p1.x, p1.y, p1.z);
             glTexCoord2d(0, 0);
             glVertex3d(p1.x, p1.y, p1.z);
             
             p1 = vertices.at(triangles.at(i+1));
-            //color(p1.x, p1.y, p1.z);
             glTexCoord2d(0, 1);
             glVertex3d(p1.x, p1.y, p1.z);
 
             p1 = vertices.at(triangles.at(i+2));
-            //color(p1.x, p1.y, p1.z);
             glTexCoord2d(1, 0);
             glVertex3d(p1.x, p1.y, p1.z);
         }
@@ -175,44 +150,32 @@ public:
             for (unsigned int i = 0; i < triangles.size(); i+=6)
             {
                 p1 = vertices.at(triangles.at(i));
-                //color(p1.x, p1.y, p1.z);
                 glTexCoord2d(0, 1);
                 glVertex3d(p1.x, p1.y, p1.z);
                 
                 p1 = vertices.at(triangles.at(i+1));
-                //color(p1.x, p1.y, p1.z);
                 glTexCoord2d(0, 0);
                 glVertex3d(p1.x, p1.y, p1.z);
 
                 p1 = vertices.at(triangles.at(i+2));
-                //color(p1.x, p1.y, p1.z);
                 glTexCoord2d(1, 0);
                 glVertex3d(p1.x, p1.y, p1.z);
 
 
-
                 p1 = vertices.at(triangles.at(i+3));
-                //color(p1.x, p1.y, p1.z);
                 glTexCoord2d(0, 1);
                 glVertex3d(p1.x, p1.y, p1.z);
                 
                 p1 = vertices.at(triangles.at(i+4));
-                //color(p1.x, p1.y, p1.z);
                 glTexCoord2d(1, 0);
                 glVertex3d(p1.x, p1.y, p1.z);
 
                 p1 = vertices.at(triangles.at(i+5));
-                //color(p1.x, p1.y, p1.z);
                 glTexCoord2d(1, 1);
                 glVertex3d(p1.x, p1.y, p1.z);
             }
 
         glEnd();
-
-        //if (type == E_MeshType::E_CUBE)
-        {
-            glDisable(GL_TEXTURE_2D);
-        }
     }
 
     void draw_quadVersion();

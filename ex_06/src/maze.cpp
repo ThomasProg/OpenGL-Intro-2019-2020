@@ -4,7 +4,6 @@
 
 void Construct::maze(Mesh &mesh)
 {
-    // Vector3 mesh;
     Vector3 a (1.f, 0.f, 0.f);
     Vector3 b (0.f, 0.f, 0.f);
     Vector3 c (0.f, 0.f, 1.f);
@@ -15,14 +14,8 @@ void Construct::maze(Mesh &mesh)
 bool Maze::isColliding(const Vector3& loc) const
 {
     Vector3Int blockLoc = loc / Vector3(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-    // blockLoc.x -= NB_ELEMENTS;
-    // blockLoc.y -= NB_ELEMENTS;
-    // blockLoc.z -= NB_ELEMENTS;
 
     Vector3Int chunkCoordinates = loc / Vector3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE);
-    // chunkCoordinates.x -= 1;
-    // chunkCoordinates.y -= 1;
-    // chunkCoordinates.z -= 1;
     for (const MazeChunk& chunk : chunks)
     {
         if (chunk.getChunkCoordinates() == chunkCoordinates)
@@ -79,7 +72,7 @@ void Maze::createChunks(const Vector3Int& playerLoc)
 
 void Maze::render(const Vector3& playerLoc)
 {
-    Vector3Int playerCoordinates(playerLoc/chunkSize);//chunk
+    Vector3Int playerCoordinates(playerLoc/chunkSize);//chunk coordinates
 
     if (lastPlayerLoc != playerCoordinates)
     {

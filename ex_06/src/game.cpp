@@ -17,9 +17,6 @@ void cameraCollisionWhileMoving(const Maze& maze, Camera& camera)
     //Also, we want to stop the play going to this direction if there is a collision.
     //Hovever, we do not want the player to go into a block on a diagonale either.
 
-    //the camera takes the hitbox of a box (cube).
-    //constexpr float hitboxSize = 2.f; 
-
     testedLocation.x += camera.hitboxSize * deltaLoc.x;
     if (maze.isColliding(testedLocation))
     {
@@ -85,10 +82,7 @@ Game::Game(bool& isValid)
     {
         image = stbi_load(filename.c_str(), &w, &h, &comp, STBI_rgb);
 
-        //glEnable(GL_TEXTURE_2D);
-
         glGenTextures(1, &texture);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glBindTexture(GL_TEXTURE_2D, texture);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -111,7 +105,7 @@ void Game::render()
 
 void Game::collision()
 {
-
+    cameraCollisionWhileMoving(maze, mainCamera);
 }
 
 void Game::loop()
@@ -126,8 +120,6 @@ void Game::loop()
 
         double time =  glfwGetTime();
         mainCamera.deltaTime = time - previousTime;
-        //FPS
-        //std::cout << "FPS : " << 1/(time - previousTime) << std::endl;
         previousTime = time;
 
         //camera
@@ -162,7 +154,7 @@ void Game::loop()
 
         mainCamera.inputs(window);
 
-        cameraCollisionWhileMoving(maze, mainCamera);
+        collision();
 
         glLoadIdentity();
         mainCamera.useTransform();

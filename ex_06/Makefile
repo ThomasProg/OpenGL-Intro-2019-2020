@@ -7,7 +7,7 @@ CC=gcc
 CXX=g++
 
 LDLIBS=-Llib -lglfw -lGL -lGLU -ldl
-OBJS=src/glad.o src/game.o src/chunk.o src/setOpenGL.o src/mesh.o src/sphere.o src/cube.o src/block.o src/maze.o src/main.o#src/primitives.o
+OBJS=src/glad.o src/game.o src/chunk.o src/mesh.o src/sphere.o src/cube.o src/block.o src/maze.o src/main.o
 DEPS=$(OBJS:.o=.d)
 
 .PHONY: all clean

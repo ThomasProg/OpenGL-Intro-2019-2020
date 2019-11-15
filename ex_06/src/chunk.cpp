@@ -12,7 +12,6 @@ int positiveModulo(int n, int modulo) //true mathematic version
 bool MazeChunk::isBlockColliding(const Vector3Int& blockWorldLoc) const
 {
     Vector3Int relativeLoc = blockWorldLoc % NB_ELEMENTS;
-    //relativeLoc = Vector3Int(relativeLoc.x - 10, relativeLoc.y - 10, relativeLoc.z - 10);
     if (relativeLoc.x < 0)
         relativeLoc.x += NB_ELEMENTS;
     if (relativeLoc.y < 0)
@@ -152,11 +151,15 @@ void MazeChunk::update()
                         bDisplay = bDisplay || x + dir[face].x < 0 
                                             || y + dir[face].y < 0
                                             || z + dir[face].z < 0;
+
+                        //If the face is displaying it means it is at the border of the chunk.
+                        //Them, if it is not, it means it is between other blocks (at the border) of the chunk.
+                        //That means the neighbourBlock is always inside the same chunk.
+                        //That is why we do not test it. 
                         if (!bDisplay)
                         {
                             neighbourBlock = getCoords3D(x + dir[face].x, y + dir[face].y, z + dir[face].z, nbElements.y, nbElements.z);
-                            //if (neighbourBlock < blocks.size())
-                                bDisplay = blocks[neighbourBlock].blockID == E_BlockTypes::E_AIR;
+                            bDisplay = blocks[neighbourBlock].blockID == E_BlockTypes::E_AIR;
 
                         }
                     
@@ -167,7 +170,6 @@ void MazeChunk::update()
                                             (nbElements.z + float(z)) * blockSize.z);
                             if (blocks[blockID].blockID != E_BlockTypes::E_AIR)
                                 blocks[blockID].addQuad(mesh, loc, blockSize, dir[face]);
-                            //new cases[blocID] (0);
                         }
                     }
                 }

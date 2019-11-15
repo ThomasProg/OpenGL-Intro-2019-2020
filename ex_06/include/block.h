@@ -20,7 +20,6 @@ struct S_Block
 
     void addQuad(Mesh& mesh, Vector3 loc, Vector3 blockSize, const Vector3Int& direction)
     {
-        //Construct::cube(mesh);
         if (direction.y == -1)
         {
             Vector3 p1 = loc;
@@ -74,11 +73,6 @@ struct S_Block
             mesh.addQuad(p4, p3, p1, p2);
         }
     }
-
-    // static void getBlockID(Vector3 coordinates, Vector3 blockSize)
-    // {
-    //     return y + coordinates.y * nbElements.y < -1;
-    // }
 };
 
 #endif

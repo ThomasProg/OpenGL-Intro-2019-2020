@@ -1,14 +1,12 @@
 #include <cstdio>
 
-#include "macros.h"
-#include "mesh.h"
-#include "sphere.h"
-#include "cone.h"
-#include "cube.h"
-#include "referential.h"
-#include "utilities.h"
-#include "camera.h"
-#include "maze.h"
+// #include "macros.h"
+// #include "mesh.h"
+// #include "sphere.h"
+// #include "cube.h"
+// #include "utilities.h"
+// #include "camera.h"
+// #include "maze.h"
 
 #include "game.h"
 

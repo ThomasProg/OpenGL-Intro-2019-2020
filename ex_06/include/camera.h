@@ -52,8 +52,8 @@ public:
             transform.location.z -= speed * cos(-transform.rotation.y/180*PI + PI/2) * deltaTime;
         }
 
-        transform.rotation.y += (newMouseLoc.x - mouseLoc.x) * sensibility * deltaTime;//rotSpeed;
-        transform.rotation.x += (newMouseLoc.y - mouseLoc.y) * sensibility * deltaTime;//rotSpeed;   
+        transform.rotation.y += (newMouseLoc.x - mouseLoc.x) * sensibility * deltaTime;
+        transform.rotation.x += (newMouseLoc.y - mouseLoc.y) * sensibility * deltaTime;   
 
         if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT))
             transform.location.y -= speed * deltaTime;
