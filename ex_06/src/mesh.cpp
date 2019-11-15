@@ -4,8 +4,8 @@
 #include "cube.h"
 #include "maze.h"
 
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+// #define STB_IMAGE_IMPLEMENTATION
+// #include "stb_image.h"
 
 void Mesh::setMesh(E_MeshType type)
 {
@@ -33,25 +33,8 @@ void Mesh::setMesh(E_MeshType type)
     }
 }
 
-///////TODO : TO REMOVE//////
-int w;
-int h;
-int comp;
-std::string filename = "media/stone.png";
-unsigned char* image = stbi_load(filename.c_str(), &w, &h, &comp, STBI_rgb);
-
 void Mesh::draw_quadVersion()
 {
-        GLuint texture;
-        glEnable(GL_TEXTURE_2D);
-        glGenTextures(1, &texture);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
-
     if (bShowEdges)
         glBegin(GL_LINE_LOOP);
     else 
