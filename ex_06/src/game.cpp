@@ -94,6 +94,14 @@ Game::Game(bool& isValid)
     return;
 }
 
+Game::~Game()
+{
+    stbi_image_free(image);
+
+    glfwDestroyWindow(window);
+    glfwTerminate();
+}
+
 void Game::render()
 {
     glEnable(GL_TEXTURE_2D);
@@ -163,6 +171,4 @@ void Game::loop()
 
         glfwSwapBuffers(window);
     }
-
-    glfwTerminate();
 }

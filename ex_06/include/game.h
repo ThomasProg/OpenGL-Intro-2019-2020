@@ -35,6 +35,7 @@ private:
     Game() = delete; //delete default constructor
 public:
     Game(bool& isValid);
+    ~Game();
     void render();
     void collision();
     void loop();
