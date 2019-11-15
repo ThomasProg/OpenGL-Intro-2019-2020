@@ -20,7 +20,8 @@ void input()
 
 }
 
-void errorGLCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, const void *userParam)
+void errorGLCallback(GLenum source, GLenum type, GLuint id, GLenum severity, 
+                     GLsizei length, const GLchar *message, const void *userParam)
 {
     fprintf(stderr, "GL error: %s (code=%d)\n", message, id);
 }
@@ -32,22 +33,31 @@ void Game::animations()
         if ((currentTime - rotAnimation.startTime) <= 2)
         {
             deltaAddRot = - mainCamera.transform.rotation.y;
-            mainCamera.transform.rotation.y = interpolate(rotAnimation.startValue, rotAnimation.endValue, (currentTime - rotAnimation.startTime), 4);
+            mainCamera.transform.rotation.y 
+                = interpolate(rotAnimation.startValue, rotAnimation.endValue, (currentTime - rotAnimation.startTime), 4);
+                    
             deltaAddRot += mainCamera.transform.rotation.y;
         }
         else 
         {
             mainCamera.transform.rotation.y += deltaAddRot;
-            //mainCamera.down(1);
-            // mainCamera.transform.location.x -= 0.01;
-            // mainCamera.transform.location.y -= 0.01;
-            // mainCamera.transform.location.z -= 0.01;
+            if (mainCamera.transform.location.z * 10 < tower.getTowerSize())
+            {
+                mainCamera.transform.location.y -= 0.01;
+                mainCamera.transform.location.z += 0.01;
+            }
         }
     }
     else
     {
         if (currentTime - rotAnimation.startTime <= 1)
-            mainCamera.transform.rotation.y = interpolate(rotAnimation.startValue, rotAnimation.endValue, (currentTime - rotAnimation.startTime));
+        {
+             mainCamera.transform.location.y 
+                 = interpolate(translateAnimation.startValue, translateAnimation.endValue, (currentTime - translateAnimation.startTime), 1);
+
+            mainCamera.transform.rotation.y 
+                = interpolate(rotAnimation.startValue, rotAnimation.endValue, (currentTime - rotAnimation.startTime));
+        }
     }
 }
 
@@ -78,8 +88,24 @@ GLFWwindow* openGLInit()
     //light
     {
         glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT0);
+        glEnable(GL_LIGHT0); // specular
+        glEnable(GL_LIGHT1);
         glEnable(GL_COLOR_MATERIAL);     
+
+        //glEnable(GL_LIGHT1); //ambient light
+        float ambient[4] = {1, 0, 0, 1};
+        glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+        glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
+
+        glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+
+        //materials
+        GLfloat specular[4] = {0.9,0.9,0.9,1};
+        glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+        float shininess = 64;
+        glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
+        // GLfloat emission[4] = {0.3,0.3,0.3,1};
+        // glMaterialfv(GL_FRONT, GL_EMISSION, emission);
     }
     
     return window;
@@ -97,12 +123,9 @@ void setupGLForUI(int width, int height)
     glMatrixMode(GL_MODELVIEW);
 }
 
-void openGLSet()
+void setupGLFor3D()
 {
     bool perspective = true;
-    float translateZ = 0.f;
-    float rotation = 0.f;
-    bool enableDepth = true;
     // Set up projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity(); 
@@ -130,49 +153,46 @@ void openGLSet()
 
 void Game::fade()
 {
-    //fade
+    if (bGameOver && inputs.put.isOn)
     {
-        if (bGameOver && inputs.put.isOn)
-        {
-            fadeReset.startTime  = currentTime;
-            fadeReset.startValue = 0.f;
-            fadeReset.endValue   = 1.f;
-        }
-        
-        if (fadeReset.startValue != fadeReset.endValue && fadeReset.startTime + 3 < currentTime)
-        {
-            //camera.reset()
-            mainCamera.transform.rotation.y = 0;
-            rotAnimation.reset();
-            bGameOver = false;
-            axisIsX = true;
-            fadeReset.reset();
-            unsigned int nbCubes = tower.getTowerSize();
-            tower.reset();
-
-            //reset moving cube altitude
-            movingCube = S_Cube(vector3D(-CUBE_HALF_SIZE, -CUBE_HALF_HEIGHT + CUBE_HEIGHT, -CUBE_HALF_SIZE), 
-                                vector3D(CUBE_HALF_SIZE, CUBE_HALF_HEIGHT + CUBE_HEIGHT, CUBE_HALF_SIZE));
-            //reset camera altitude
-            mainCamera.transform.location.y -= CUBE_HEIGHT * nbCubes;
-        }
-            
-
-        float fadeValue = fadeReset.interp(currentTime, 3);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glColor4f(0,0,0,fadeValue);
-        glBegin(GL_QUADS);
-        glVertex3f(-1, -1, 0);
-        glVertex3f(-1, 1, 0);
-        glVertex3f(1, 1, 0);
-        glVertex3f(1, -1, 0);
-        glEnd();
+        fadeReset.startTime  = currentTime;
+        fadeReset.startValue = 0.f;
+        fadeReset.endValue   = 1.f;
     }
+    
+    if (fadeReset.startValue != fadeReset.endValue && fadeReset.startTime + 3 < currentTime)
+    {
+        mainCamera.reset();
+        mainCamera.transform.location.z = 2;
+        mainCamera.transform.location.y += CUBE_HEIGHT;
+        rotAnimation.reset();
+        bGameOver = false;
+        axisIsX = true;
+        fadeReset.reset();
+        //unsigned int nbCubes = tower.getTowerSize();
+        tower.reset();
+
+        //reset moving cube altitude
+        movingCube = S_Cube(vector3D(-CUBE_HALF_SIZE, -CUBE_HALF_HEIGHT + CUBE_HEIGHT, -CUBE_HALF_SIZE), 
+                            vector3D(CUBE_HALF_SIZE, CUBE_HALF_HEIGHT + CUBE_HEIGHT, CUBE_HALF_SIZE));
+        //reset camera altitude
+        //mainCamera.transform.location.y -= CUBE_HEIGHT * nbCubes;
+    }
+        
+
+    float fadeValue = fadeReset.interp(currentTime, 3);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glColor4f(0,0,0,fadeValue);
+    glBegin(GL_QUADS);
+    glVertex3f(-1, -1, 0);
+    glVertex3f(-1, 1, 0);
+    glVertex3f(1, 1, 0);
+    glVertex3f(1, -1, 0);
+    glEnd();
 }
 
 void Game::render2D()
 {
-    //glDisable(GL_LIGHT0);
     glPopMatrix();
     setupGLForUI(SCREEN_WIDTH, SCREEN_HEIGHT);
     fade();
@@ -181,12 +201,27 @@ void Game::render2D()
     score.draw();
 
     glPopMatrix();
-    //glEnable(GL_LIGHT0);
 }
 
 void Game::render3D()
 {
+    glEnable(GL_LIGHT0);
+    glEnable(GL_LIGHT1);
 
+    tower.draw();
+
+    animations();
+
+    if (!bGameOver)
+    {
+        float rgb[3];
+        std::tie(rgb[0], rgb[1], rgb[2]) = S_Cube::getColor(tower.getTowerSize());
+        glColor3f(rgb[0], rgb[1], rgb[2]);
+        movingCube.movingCubeTick(axisIsX, currentTime);
+    }
+
+    glDisable(GL_LIGHT1);
+    glDisable(GL_LIGHT0);
 }
 
 int Game::start()
@@ -203,13 +238,17 @@ int Game::start()
             {
                 movingCube.minCoords.y += CUBE_HEIGHT;
                 movingCube.maxCoords.y += CUBE_HEIGHT;  
-                mainCamera.transform.location.y += CUBE_HEIGHT;
+
+                translateAnimation.startValue = mainCamera.transform.location.y;
+                translateAnimation.endValue += CUBE_HEIGHT; //no bug when spamming
+                translateAnimation.startTime = glfwGetTime();
+
                 axisIsX = !axisIsX;
 
                 //animation
-                rotAnimation.startTime = currentTime;
+                rotAnimation.startTime  = currentTime;
                 rotAnimation.startValue = mainCamera.transform.rotation.y;
-                rotAnimation.endValue += 90.f;
+                rotAnimation.endValue  += 90.f;
             }
             else 
             {
@@ -217,9 +256,9 @@ int Game::start()
 
                 inputs.put.isOn = true; //to detect next space 
                 //animation
-                rotAnimation.startTime = currentTime;
+                rotAnimation.startTime  = currentTime;
                 rotAnimation.startValue = mainCamera.transform.rotation.y;
-                rotAnimation.endValue += 360.f;
+                rotAnimation.endValue  += 360.f;
             }
         }
     };
@@ -239,28 +278,43 @@ int Game::start()
         mainCamera.deltaTime = currentTime - previousTime;
         previousTime = currentTime;
 
-        //setupGLForDrawing(SCREEN_WIDTH, SCREEN_HEIGHT);
-        openGLSet();
+        //std::cout << "FPS : " << 1 / mainCamera.deltaTime << std::endl;
+
+        setupGLFor3D();
         glEnable(GL_DEPTH_TEST);
         glColor3f(0xFF, 0xFF, 0xFF);
         glClearColor(0.110*5, 0.177*5, 0.245*5, 0xFF);
 
-        float loc[4] = {1,1,1,0};
-        glLightfv(GL_LIGHT0, GL_POSITION, loc);
         glPushMatrix();
+        
         mainCamera.useTransform();
+        
+        //changing location, similar to the sun
+        float loc2[4] = {1,2,3,1};
+        loc2[1] = cos(currentTime);
+        loc2[2] = sin(currentTime);
+        glLightfv(GL_LIGHT0, GL_POSITION, loc2);
+        //there are 2 lights for a better render
+        float loc[4] = {-1,-2,-3,1};
+        glLightfv(GL_LIGHT1, GL_POSITION, loc);
 
-        // glPushMatrix();
-        // drawRef();
-        // glPopMatrix(); 
-        // glColor3f(1.f, 0.f, 0.f);
 
-        tower.draw();
+        render3D();
 
-        animations();
+        inputs.test.input(glfwGetKey(window, GLFW_KEY_H));
+        if (inputs.test.isOn)
 
-        if (!bGameOver)
-            movingCube.movingCubeTick(axisIsX, currentTime);
+        {
+            for (unsigned int i = 0; i < 10; i++)
+            {
+                movingCube.minCoords.x = -500;
+                movingCube.minCoords.z = -500;
+                movingCube.maxCoords.x = 500;
+                movingCube.maxCoords.z = 500;
+                inputs.put.onSwitch();
+                inputs.test.isOn = false;
+            }
+        }
 
         inputs.put.input(glfwGetKey(window, GLFW_KEY_SPACE));
         mainCamera.inputs(window);

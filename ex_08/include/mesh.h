@@ -63,17 +63,14 @@ struct S_Cube
             && minCoords.z <= cube.maxCoords.z && maxCoords.z >= cube.minCoords.z;
     }
 
-    // static void splitFace(vector3D min, vector3D max, const vector3D& normal)
-    // {
-    //     glVertex3f(min.x, min.y, min.z);
-    //     glVertex3f(max.x, min.y, min.z);
-    //     glVertex3f(max.x, maxCoords.y, min.z);
-    //     glVertex3f(min.x, maxCoords.y, minCoords.z);
-    // }
-
+    
+    //O(n^3) complexity
+    //could be optimized : 
+    // - to O(6 * n^2) complexity
+    // - reduce glVertex3f call number
     void draw() const
     {
-        constexpr unsigned int nbDivisions = 10;
+        constexpr unsigned int nbDivisions = 5;
         float deltaX = maxCoords.x - minCoords.x;
         float deltaY = maxCoords.y - minCoords.y;
         float deltaZ = maxCoords.z - minCoords.z;
@@ -134,42 +131,6 @@ struct S_Cube
                 } 
             }
         }
-
-            // glNormal3f(0, 0, -1);
-            // glVertex3f(minCoords.x, minCoords.y, minCoords.z);
-            // glVertex3f(maxCoords.x, minCoords.y, minCoords.z);
-            // glVertex3f(maxCoords.x, maxCoords.y, minCoords.z);
-            // glVertex3f(minCoords.x, maxCoords.y, minCoords.z);
-
-            // glNormal3f(0, 0, 1);
-            // glVertex3f(minCoords.x, minCoords.y, maxCoords.z);
-            // glVertex3f(maxCoords.x, minCoords.y, maxCoords.z);
-            // glVertex3f(maxCoords.x, maxCoords.y, maxCoords.z);
-            // glVertex3f(minCoords.x, maxCoords.y, maxCoords.z);
-
-            // glNormal3f(-1, 0, 0);
-            // glVertex3f(minCoords.x, minCoords.y, minCoords.z);
-            // glVertex3f(minCoords.x, minCoords.y, maxCoords.z);
-            // glVertex3f(minCoords.x, maxCoords.y, maxCoords.z);
-            // glVertex3f(minCoords.x, maxCoords.y, minCoords.z);
-
-            // glNormal3f(1, 0, 0);
-            // glVertex3f(maxCoords.x, minCoords.y, minCoords.z);
-            // glVertex3f(maxCoords.x, minCoords.y, maxCoords.z);
-            // glVertex3f(maxCoords.x, maxCoords.y, maxCoords.z);
-            // glVertex3f(maxCoords.x, maxCoords.y, minCoords.z);
-
-            // glNormal3f(0, -1, 0);
-            // glVertex3f(minCoords.x, minCoords.y, minCoords.z);
-            // glVertex3f(minCoords.x, minCoords.y, maxCoords.z);
-            // glVertex3f(maxCoords.x, minCoords.y, maxCoords.z);
-            // glVertex3f(maxCoords.x, minCoords.y, minCoords.z);
-
-            // glNormal3f(0, 1, 0);
-            // glVertex3f(minCoords.x, maxCoords.y, minCoords.z);
-            // glVertex3f(minCoords.x, maxCoords.y, maxCoords.z);
-            // glVertex3f(maxCoords.x, maxCoords.y, maxCoords.z);
-            // glVertex3f(maxCoords.x, maxCoords.y, minCoords.z);
     }
 
     static std::tuple<float, float, float> getColor(unsigned int id)
@@ -194,7 +155,7 @@ struct S_Cube
     {
         float delta = center;
         center      = std::sin(alpha * moveSpeed) * moveDistance;
-        delta       -= center;
+        delta      -= center;
 
         max -= delta;
         min -= delta;
@@ -202,7 +163,6 @@ struct S_Cube
 
     void movingCubeTick(bool axisIsX, float currentTime)
     {
-        glColor3f(0,0,1);
         //move cube
         if (axisIsX)
             moveAxis(startCenter.x, minCoords.x, maxCoords.x, currentTime);
@@ -216,7 +176,7 @@ struct S_Cube
 };
 
 #include <array>
-#define TOWER_MAX_SIZE 10000
+#define TOWER_MAX_SIZE 5000
 
 class CubeTower
 {
@@ -249,19 +209,8 @@ public:
 
     void draw()
     {
-        Mesh m;
-        Construct::UVSphere(50,50,m);
-        GLfloat specular2[4] = {0.9,0.9,0.9,1};
-        //glLightfv(GL_LIGHT0, GL_SPECULAR, specular2);
-        //glColorMaterial(GL_FRONT, GL_AMBIENT);
-        glMaterialfv(GL_FRONT, GL_SPECULAR, specular2);
-        GLfloat r[4];
-        glGetMaterialfv(GL_FRONT, GL_SPECULAR, r);
-        float gdr = 2;
-        glMaterialfv(GL_FRONT, GL_SHININESS, &gdr);
-        glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
-        for (unsigned int ki = 0; ki < 4; ki++)
-            std::cout << (float)r[ki] << std::endl;
+        // Mesh m;
+        // Construct::UVSphere(50,50,m);
 
         glBegin(GL_QUADS);
         unsigned int n = (nbCubes < TOWER_MAX_SIZE ? nbCubes : TOWER_MAX_SIZE);

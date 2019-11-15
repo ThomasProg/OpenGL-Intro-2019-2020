@@ -13,6 +13,7 @@
 struct S_Inputs
 {
     S_DoOnce put;
+    S_DoOnce test;
 };
 
 class Game
@@ -27,6 +28,7 @@ class Game
 
 public:
     TimeLine rotAnimation;
+    TimeLine translateAnimation;
     TimeLine fadeReset;
 
     Score score;

@@ -6,7 +6,7 @@
 
 void drawRef()
 {
-    constexpr unsigned int precision = 10;
+    //constexpr unsigned int precision = 10;
 
     glBegin(GL_LINES);
 

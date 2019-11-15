@@ -15,7 +15,7 @@ public:
 
     Camera() 
     {
-        transform.rotation.x += 20.f;
+        transform.rotation.x = 0.f;
     }
 
     // void down(float value)
@@ -67,6 +67,13 @@ public:
 		glRotatef(transform.rotation.y, 0, 1, 0);
 
 		//glScalef(transform.scale.x, transform.scale.y, transform.scale.z);
+    }
+
+    void reset()
+    {
+        transform.location = vector3D(0.f, 0.f, 0.f);
+        transform.rotation = vector3D(0.f, 0.f, 0.f);
+        transform.scale = vector3D(0.f, 0.f, 0.f);
     }
 };
 
