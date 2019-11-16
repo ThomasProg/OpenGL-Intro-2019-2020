@@ -13,15 +13,16 @@
 
 constexpr int SCREEN_WIDTH  = 700;
 constexpr int SCREEN_HEIGHT =  700;
-constexpr float SPEED = 0.05f;
-constexpr float SHAPE_SIZE = 200;
 
-constexpr float SHAPE_SCREEN_SIZE_X = SHAPE_SIZE / SCREEN_WIDTH;
-constexpr float SHAPE_SCREEN_SIZE_Y = SHAPE_SIZE / SCREEN_HEIGHT;
-constexpr float SHAPE_SCREEN_SIZE_Z = SHAPE_SIZE / SCREEN_HEIGHT;
+constexpr float CUBE_SIZE   = 0.5f;
+constexpr float CUBE_HEIGHT = 0.1f;
 
-constexpr float BLOCK_SIZE  = 1;
-constexpr int NB_ELEMENTS = 10;
-constexpr float CHUNK_SIZE  = BLOCK_SIZE * NB_ELEMENTS;
+constexpr float CUBE_HALF_SIZE = CUBE_SIZE / 2;
+constexpr float CUBE_HALF_HEIGHT    = CUBE_HEIGHT / 2;
+
+constexpr float moveDistance = 1; 
+constexpr float moveSpeed    = 1;
+
+#define TOWER_MAX_SIZE 5000
 
 #endif

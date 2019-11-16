@@ -2,9 +2,8 @@
 #define _GAME_H_
 
 #include "macros.h"
-#include "mesh.h"
+#include "tower.h"
 #include "camera.h"
-#include "movingCube.h"
 #include "doOnce.h"
 #include "timeline.h"
 
