@@ -1,0 +1,17 @@
+============================================
+===================README===================
+============================================
+
+==============
+===FEATURES===
+==============
+
+- A cube is moving above the tower.
+- The player can press the Spacebar to bring down the cube.
+- The cube is cut relatively to the tower.
+- If the cube falls next to the tower's last cube, 
+    then the game is over and the tower starts rotating.
+- Else, the visible face of the tower is changed by a fluid animation.
+- The score is displayed at the top of the screen.
+
+- The player can press the spacebar again when he lost, to reset the game through an animation.
