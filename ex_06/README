@@ -1,0 +1,14 @@
+============================================
+===================README===================
+============================================
+
+==============
+===FEATURES===
+==============
+
+- The player appears in a maze underground.
+- He can move with wasd and arrows, and rotate the camera with the mouse.
+- The player can go out of the maze (at the surface).
+- The world is generated procedurally.
+- Chunks are spawned and destroyed automatically, for optimization.
+- Collisions has been added to blocks.
