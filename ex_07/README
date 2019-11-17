@@ -1,0 +1,26 @@
+============================================
+===================README===================
+============================================
+
+==============
+===FEATURES===
+==============
+
+- The player appears in a maze underground.
+- He can move with wasd and arrows, and rotate the camera with the mouse.
+- The player can go out of the maze (at the surface).
+- The world is generated procedurally.
+- Chunks are spawned and destroyed automatically, for optimization.
+- Collisions has been added to blocks.
+
+==============
+=====NEW======
+==============
+
+- Lights added :
+    - if "0" is pressed, a directional light appears.
+    - If "1" is pressed, a point light appears.
+    - If "2" is pressed, a spot light appears.
+    - If "3" is pressed, a light which can show materials' specular effect easily appears.
+    - Both the point light and the spot light are moving with the player.
+    - The directionnal light doesn't move.

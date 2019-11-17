@@ -181,19 +181,10 @@ void Game::loop()
 
         mainCamera.useTransform();
 
-        // glPushMatrix();
-        // glTranslatef(0,10,0);
         if (glfwGetKey(window, GLFW_KEY_0))
             lightning.displayDirectionalLight();
         if (glfwGetKey(window, GLFW_KEY_3))
             lightning.displayProofOfSpecularLight();
-        // float diffuse[4] = {0,0,0,0};
-        // glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
-
-        // Mesh mesh;
-        // Construct::UVSphere(10, 10, mesh);
-        // mesh.draw();
-        // glPopMatrix();
 
         render();
 
