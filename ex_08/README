@@ -7,7 +7,7 @@
 ==============
 
 - A cube is moving above the tower.
-- The player can press the Spacebar to bring down the cube.
+- The player can press the Spacebar (or X) to bring down the cube.
 - The cube is cut relatively to the tower.
 - If the cube falls next to the tower's last cube, 
     then the game is over and the tower starts rotating.

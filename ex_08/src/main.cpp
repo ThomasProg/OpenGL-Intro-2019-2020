@@ -306,7 +306,7 @@ int Game::start()
             }
         }
 
-        inputs.put.input(glfwGetKey(window, GLFW_KEY_SPACE));
+        inputs.put.input(glfwGetKey(window, GLFW_KEY_SPACE) || glfwGetKey(window, GLFW_KEY_X));
         mainCamera.inputs(window);
         render2D();
         glPopMatrix();
